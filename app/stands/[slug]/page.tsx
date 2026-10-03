@@ -1,0 +1,252 @@
+import Link from "next/link";
+
+import Header from "@/components/Header";
+import ProductCard from "@/components/ProductCard";
+import RegisterVisitButton from "@/components/RegisterVisitButton";
+
+import {
+  getCompanyFromSupabase,
+  getProductsFromSupabase,
+  getStandFromSupabase,
+} from "@/lib/supabaseData";
+
+type StandPageProps = {
+  params: Promise<{
+    slug: string;
+  }>;
+};
+
+export default async function StandPage({
+  params,
+}: StandPageProps) {
+  const { slug } = await params;
+
+  const stand =
+    await getStandFromSupabase(slug);
+
+  if (!stand) {
+    return (
+      <main className="min-h-screen bg-slate-50">
+        <Header />
+
+        <div className="mx-auto max-w-3xl px-5 py-16 text-center">
+          <h1 className="text-2xl font-bold text-slate-900">
+            Stand no encontrado
+          </h1>
+
+          <Link
+            href="/stands"
+            className="mt-4 inline-block text-sm font-semibold text-sky-600"
+          >
+            ← Volver a stands
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
+  const [company, products] =
+    await Promise.all([
+      getCompanyFromSupabase(
+        stand.companyId
+      ),
+      getProductsFromSupabase(
+        stand.companyId
+      ),
+    ]);
+
+  if (!company) {
+    return (
+      <main className="min-h-screen bg-slate-50">
+        <Header />
+
+        <div className="mx-auto max-w-3xl px-5 py-16 text-center">
+          <h1 className="text-2xl font-bold text-slate-900">
+            Empresa no encontrada
+          </h1>
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main className="min-h-screen bg-slate-50">
+      <Header />
+
+      <div className="mx-auto max-w-4xl px-5 py-8">
+
+        <Link
+          href="/stands"
+          className="text-sm font-semibold text-sky-600"
+        >
+          ← Volver a stands
+        </Link>
+
+
+        {/* Información principal */}
+
+        <section className="mt-6 overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-slate-200">
+
+          <div className="bg-sky-600 p-6 text-white">
+
+            <div className="flex items-start justify-between gap-4">
+
+              <div>
+
+                <p className="text-sm font-bold text-sky-100">
+                  STAND {stand.number}
+                </p>
+
+                <h1 className="mt-2 text-3xl font-bold">
+                  {company.name}
+                </h1>
+
+                <p className="mt-2 text-sm text-sky-100">
+                  {company.category}
+                </p>
+
+              </div>
+
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white text-3xl">
+                {company.logo}
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div className="p-6">
+
+            <h2 className="text-xl font-bold text-slate-900">
+              Sobre la empresa
+            </h2>
+
+            <p className="mt-3 leading-7 text-slate-500">
+              {company.description}
+            </p>
+
+            <div className="mt-5 rounded-xl bg-slate-50 p-4">
+
+              <p className="text-sm font-semibold text-slate-700">
+                📍 Ubicación
+              </p>
+
+              <p className="mt-1 text-sm text-slate-500">
+                {stand.location}
+              </p>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        {/* Productos */}
+
+        <section className="mt-8">
+
+          <div className="mb-4">
+
+            <p className="text-sm font-semibold text-sky-600">
+              SOLUCIONES
+            </p>
+
+            <h2 className="mt-1 text-2xl font-bold text-slate-900">
+              Productos y soluciones
+            </h2>
+
+          </div>
+
+
+          {products.length === 0 ? (
+
+            <div className="rounded-2xl bg-white p-6 text-center ring-1 ring-slate-200">
+
+              <p className="text-sm text-slate-500">
+                Esta empresa todavía no tiene
+                productos registrados.
+              </p>
+
+            </div>
+
+          ) : (
+
+            <div className="grid gap-4 sm:grid-cols-2">
+
+              {products.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                />
+              ))}
+
+            </div>
+
+          )}
+
+        </section>
+
+
+        {/* Concurso */}
+
+        {stand.contestRequired && (
+          <section className="mt-8">
+
+            <div className="rounded-2xl bg-slate-950 p-6 text-white">
+
+              <p className="text-sm font-semibold text-sky-300">
+                CONCURSO
+              </p>
+
+              <h2 className="mt-2 text-xl font-bold">
+                Registra tu visita
+              </h2>
+
+              <p className="mt-2 text-sm leading-6 text-slate-300">
+                Visita este stand y registra tu
+                participación para completar tu
+                pasaporte de la feria.
+              </p>
+
+              <div className="mt-5">
+
+                <RegisterVisitButton
+                  standSlug={stand.slug}
+                />
+
+              </div>
+
+            </div>
+
+          </section>
+        )}
+
+
+        {/* Mapa */}
+
+        <section className="mt-8">
+
+          <div className="rounded-2xl bg-white p-6 ring-1 ring-slate-200">
+
+            <h2 className="text-lg font-bold text-slate-900">
+              Ubicación del stand
+            </h2>
+
+            <div className="mt-4 flex h-48 items-center justify-center rounded-xl bg-slate-100">
+
+              <p className="text-sm text-slate-400">
+                🗺️ Mapa de la feria
+              </p>
+
+            </div>
+
+          </div>
+
+        </section>
+
+      </div>
+    </main>
+  );
+}
