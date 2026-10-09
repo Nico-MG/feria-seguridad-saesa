@@ -1,12 +1,16 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import QuickLinks from "@/components/QuickLinks";
 import LiveEvent from "@/components/LiveEvent";
 import UpcomingEvents from "@/components/UpcomingEvents";
-import QuickLinks from "@/components/QuickLinks";
 
-import { talks } from "@/data/mock";
+import {
+  getActiveEventTalks,
+} from "@/lib/supabaseData";
 
-export default function Home() {
+export default async function HomePage() {
+  const talks =
+    await getActiveEventTalks();
 
   return (
     <main className="min-h-screen bg-slate-50">
@@ -14,22 +18,10 @@ export default function Home() {
 
       <Hero />
 
-      <div className="mx-auto max-w-6xl px-5 py-8">
-        <LiveEvent events={talks} />
-
-        <UpcomingEvents events={talks} />
-
+      <div className="mx-auto max-w-5xl px-5 pb-12">
         <QuickLinks />
-
-        <footer className="mt-12 border-t border-slate-200 py-8 text-center">
-          <p className="text-sm font-semibold text-slate-700">
-            Feria de Seguridad SAESA
-          </p>
-
-          <p className="mt-1 text-xs text-slate-400">
-            2026 · Todos los derechos reservados
-          </p>
-        </footer>
+  <LiveEvent talks={talks} />
+  <UpcomingEvents talks={talks} />
       </div>
     </main>
   );

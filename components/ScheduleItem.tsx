@@ -1,4 +1,3 @@
-import { getCompanyById } from "@/lib/eventData";
 import { getEventStatus } from "@/lib/eventUtils";
 import type { Talk } from "@/types/event";
 
@@ -8,7 +7,9 @@ type ScheduleItemProps = {
 };
 
 function formatTime(dateString: string) {
-  return new Date(dateString).toLocaleTimeString("es-CL", {
+  return new Date(
+    dateString
+  ).toLocaleTimeString("es-CL", {
     hour: "2-digit",
     minute: "2-digit",
   });
@@ -18,13 +19,16 @@ export default function ScheduleItem({
   event,
   now,
 }: ScheduleItemProps) {
-  const status = getEventStatus(event, now);
-
-  const company = getCompanyById(event.companyId);
+  const status = getEventStatus(
+    event,
+    now
+  );
 
   const isLive = status === "live";
-  const isUpcoming = status === "upcoming";
-  const isFinished = status === "finished";
+  const isUpcoming =
+    status === "upcoming";
+  const isFinished =
+    status === "finished";
 
   return (
     <article
@@ -69,7 +73,10 @@ export default function ScheduleItem({
 
         <p className="mt-2 text-sm text-slate-500">
           {event.speaker}
-          {company ? ` · ${company.name}` : ""}
+
+          {event.company
+            ? ` · ${event.company.name}`
+            : ""}
         </p>
 
         <p className="mt-2 text-sm text-slate-400">

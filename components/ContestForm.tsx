@@ -1,5 +1,10 @@
 "use client";
 
+import { useState } from "react";
+
+import { supabase } from "@/lib/supabase";
+import { ensureAnonymousSession } from "@/lib/auth";
+
 type ContestFormProps = {
   completed: boolean;
 };
@@ -7,20 +12,81 @@ type ContestFormProps = {
 export default function ContestForm({
   completed,
 }: ContestFormProps) {
-  function handleSubmit(
+  const [loading, setLoading] =
+    useState(false);
+
+  const [submitted, setSubmitted] =
+    useState(false);
+
+  const [error, setError] =
+    useState<string | null>(null);
+
+  async function handleSubmit(
     event: React.FormEvent<HTMLFormElement>
   ) {
     event.preventDefault();
 
-    alert(
-      "¡Tu participación en el concurso ha sido registrada!"
-    );
+    setLoading(true);
+    setError(null);
+
+    try {
+      const session =
+        await ensureAnonymousSession();
+
+      const { data: participant, error: participantError } =
+        await supabase
+          .from("participants")
+          .select("id")
+          .eq("id", session.user.id)
+          .maybeSingle();
+
+      if (participantError) {
+        throw participantError;
+      }
+
+      if (!participant) {
+        throw new Error(
+          "No existe un participante registrado."
+        );
+      }
+
+      const { error: contestError } =
+        await supabase
+          .from("contest_entries")
+          .insert({
+            participant_id:
+              session.user.id,
+          });
+
+      if (contestError) {
+        if (
+          contestError.code === "23505"
+        ) {
+          setSubmitted(true);
+          return;
+        }
+
+        throw contestError;
+      }
+
+      setSubmitted(true);
+    } catch (error) {
+      console.error(error);
+
+      setError(
+        "No fue posible registrar tu participación."
+      );
+    } finally {
+      setLoading(false);
+    }
   }
 
   if (!completed) {
     return (
       <div className="rounded-2xl bg-slate-100 p-6 text-center">
-        <div className="text-3xl">🔒</div>
+        <div className="text-3xl">
+          🔒
+        </div>
 
         <h3 className="mt-3 font-bold text-slate-900">
           Concurso bloqueado
@@ -30,6 +96,29 @@ export default function ContestForm({
           Completa todas las visitas requeridas
           para habilitar tu participación.
         </p>
+      </div>
+    );
+  }
+
+  if (submitted) {
+    return (
+      <div className="rounded-2xl bg-green-50 p-6 text-center ring-1 ring-green-200">
+        <div className="text-4xl">
+          🎉
+        </div>
+
+        <h3 className="mt-3 text-xl font-bold text-green-900">
+          ¡Participación registrada!
+        </h3>
+
+        <p className="mt-2 text-sm text-green-700">
+          Tu participación en el concurso fue
+          registrada correctamente.
+        </p>
+
+        <div className="mt-5 rounded-xl bg-white p-4 text-sm text-slate-600">
+          ¡Mucha suerte!
+        </div>
       </div>
     );
   }
@@ -49,16 +138,25 @@ export default function ContestForm({
         </h3>
 
         <p className="mt-2 text-sm text-slate-500">
-          Ya cumples los requisitos para participar
-          en el concurso.
+          Visitaste todos los stands requeridos.
+          Ya puedes participar en el concurso.
         </p>
       </div>
 
+      {error && (
+        <div className="mt-5 rounded-xl bg-red-50 p-3 text-center text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
       <button
         type="submit"
-        className="mt-6 w-full rounded-xl bg-slate-950 px-4 py-4 font-bold text-white transition hover:bg-slate-800"
+        disabled={loading}
+        className="mt-6 w-full rounded-xl bg-slate-950 px-4 py-4 font-bold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        🎁 Participar en el concurso
+        {loading
+          ? "Registrando..."
+          : "🎁 Participar en el concurso"}
       </button>
     </form>
   );

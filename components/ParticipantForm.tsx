@@ -1,14 +1,24 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
-
 import {
-  getParticipant,
-  saveParticipant,
-} from "@/lib/participant";
+  FormEvent,
+  useEffect,
+  useState,
+} from "react";
+
+import { supabase } from "@/lib/supabase";
+import { ensureAnonymousSession } from "@/lib/auth";
 
 type ParticipantFormProps = {
   onRegistered?: () => void;
+};
+
+type Participant = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  registered_at: string;
 };
 
 export default function ParticipantForm({
@@ -18,59 +28,98 @@ export default function ParticipantForm({
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
 
-  const [loaded, setLoaded] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
-    const existingParticipant =
-      getParticipant();
+    async function loadParticipant() {
+      try {
+        const session =
+          await ensureAnonymousSession();
 
-    if (existingParticipant) {
-      setName(existingParticipant.name);
-      setEmail(existingParticipant.email);
-      setPhone(existingParticipant.phone);
-      setSubmitted(true);
+        const { data, error } =
+          await supabase
+            .from("participants")
+            .select("*")
+            .eq("id", session.user.id)
+            .maybeSingle();
+
+        if (error) {
+          throw error;
+        }
+
+        if (data) {
+          const participant =
+            data as Participant;
+
+          setName(participant.name);
+          setEmail(participant.email);
+          setPhone(participant.phone ?? "");
+          setSubmitted(true);
+        }
+      } catch (error) {
+        console.error(error);
+
+        setError(
+          "No fue posible cargar tu registro."
+        );
+      } finally {
+        setLoading(false);
+      }
     }
 
-    setLoaded(true);
+    loadParticipant();
   }, []);
 
-  function handleSubmit(
+  async function handleSubmit(
     event: FormEvent<HTMLFormElement>
   ) {
     event.preventDefault();
 
-    const existingParticipant =
-      getParticipant();
+    setSaving(true);
+    setError(null);
 
-    const participant = {
-      id:
-        existingParticipant?.id ??
-        crypto.randomUUID(),
+    try {
+      const session =
+        await ensureAnonymousSession();
 
-      name: name.trim(),
+      const { error } =
+        await supabase
+          .from("participants")
+          .upsert({
+            id: session.user.id,
+            name: name.trim(),
+            email: email.trim(),
+            phone: phone.trim(),
+          });
 
-      email: email.trim(),
+      if (error) {
+        throw error;
+      }
 
-      phone: phone.trim(),
+      setSubmitted(true);
 
-      registeredAt:
-        existingParticipant?.registeredAt ??
-        new Date().toISOString(),
-    };
+      onRegistered?.();
+    } catch (error) {
+      console.error(error);
 
-    saveParticipant(participant);
-
-    setSubmitted(true);
-
-    onRegistered?.();
+      setError(
+        "No fue posible guardar tus datos. Inténtalo nuevamente."
+      );
+    } finally {
+      setSaving(false);
+    }
   }
 
-  if (!loaded) {
+  if (loading) {
     return (
       <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
         <p className="text-sm text-slate-500">
-          Cargando...
+          Preparando tu registro...
         </p>
       </div>
     );
@@ -154,11 +203,20 @@ export default function ParticipantForm({
         />
       </div>
 
+      {error && (
+        <div className="rounded-xl bg-red-50 p-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
       <button
         type="submit"
-        className="w-full rounded-xl bg-slate-950 px-4 py-4 font-bold text-white transition hover:bg-slate-800"
+        disabled={saving}
+        className="w-full rounded-xl bg-slate-950 px-4 py-4 font-bold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        🎯 Comenzar a participar
+        {saving
+          ? "Guardando..."
+          : "🎯 Comenzar a participar"}
       </button>
     </form>
   );

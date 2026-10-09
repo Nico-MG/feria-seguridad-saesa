@@ -213,7 +213,7 @@ export default async function StandPage({
               <div className="mt-5">
 
                 <RegisterVisitButton
-                  standSlug={stand.slug}
+                  standId={stand.id}
                 />
 
               </div>

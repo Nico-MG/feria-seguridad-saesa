@@ -185,7 +185,16 @@ export async function getTalksFromSupabase(
 ): Promise<Talk[]> {
   const { data, error } = await supabase
     .from("talks")
-    .select("*")
+    .select(`
+      *,
+      companies (
+        id,
+        name,
+        description,
+        category,
+        logo
+      )
+    `)
     .eq("event_id", eventId)
     .order("start");
 
@@ -201,6 +210,18 @@ export async function getTalksFromSupabase(
     title: talk.title,
     speaker: talk.speaker,
     companyId: talk.company_id,
+    company: talk.companies
+      ? {
+          id: talk.companies.id,
+          name: talk.companies.name,
+          description:
+            talk.companies.description ?? "",
+          category:
+            talk.companies.category ?? "",
+          logo:
+            talk.companies.logo ?? "",
+        }
+      : null,
     start: talk.start,
     end: talk.end,
     location: talk.location,
@@ -230,4 +251,64 @@ export async function getActiveEvent(): Promise<Event | null> {
     date: data.date,
     location: data.location,
   };
+}
+
+export async function getContestStands(
+  eventId: number
+): Promise<Stand[]> {
+  const { data, error } = await supabase
+    .from("stands")
+    .select("*")
+    .eq("event_id", eventId)
+    .eq("contest_required", true)
+    .order("id");
+
+  if (error) {
+    throw new Error(
+      `Error obteniendo stands del concurso: ${error.message}`
+    );
+  }
+
+  return (data ?? []).map((stand) => ({
+    id: stand.id,
+    eventId: stand.event_id,
+    companyId: stand.company_id,
+    number: stand.number,
+    location: stand.location,
+    slug: stand.slug,
+    contestRequired:
+      stand.contest_required,
+  }));
+}
+
+export async function getParticipantVisits(
+  participantId: string
+): Promise<number[]> {
+  const { data, error } = await supabase
+    .from("stand_visits")
+    .select("stand_id")
+    .eq(
+      "participant_id",
+      participantId
+    );
+
+  if (error) {
+    throw new Error(
+      `Error obteniendo visitas: ${error.message}`
+    );
+  }
+
+  return (data ?? []).map(
+    (visit) => visit.stand_id
+  );
+}
+
+export async function getActiveEventTalks(): Promise<Talk[]> {
+  const event = await getActiveEvent();
+
+  if (!event) {
+    return [];
+  }
+
+  return getTalksFromSupabase(event.id);
 }
