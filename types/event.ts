@@ -10,7 +10,7 @@ export type Talk = {
   eventId: number;
   title: string;
   speaker: string;
-  companyId: number | null;
+  companyId: number;
   company?: Company | null;
   start: string;
   end: string;
