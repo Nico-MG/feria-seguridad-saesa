@@ -1,35 +1,43 @@
 import { supabase } from "@/lib/supabase";
 
-import type {
-  Company,
-  Event,
-  Product,
-  Stand,
-  Talk,
-} from "@/types/event";
+import type { Company, Event, Product, Stand, Talk } from "@/types/event";
 
-export async function getStandsFromSupabase(
-  eventId?: number
-): Promise<Stand[]> {
-  let query = supabase
-    .from("stands")
-    .select("*")
-    .order("id");
-
-  if (eventId !== undefined) {
-    query = query.eq(
-      "event_id",
-      eventId
-    );
+function getStandMapArea(stand: {
+  map_x?: number | null;
+  map_y?: number | null;
+  map_width?: number | null;
+  map_height?: number | null;
+}) {
+  if (
+    typeof stand.map_x !== "number" ||
+    typeof stand.map_y !== "number" ||
+    typeof stand.map_width !== "number" ||
+    typeof stand.map_height !== "number"
+  ) {
+    return null;
   }
 
-  const { data, error } =
-    await query;
+  return {
+    x: stand.map_x,
+    y: stand.map_y,
+    width: stand.map_width,
+    height: stand.map_height,
+  };
+}
+
+export async function getStandsFromSupabase(
+  eventId?: number,
+): Promise<Stand[]> {
+  let query = supabase.from("stands").select("*").order("id");
+
+  if (eventId !== undefined) {
+    query = query.eq("event_id", eventId);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
-    throw new Error(
-      `Error obteniendo stands: ${error.message}`
-    );
+    throw new Error(`Error obteniendo stands: ${error.message}`);
   }
 
   return (data ?? []).map((stand) => ({
@@ -39,24 +47,19 @@ export async function getStandsFromSupabase(
     number: stand.number,
     location: stand.location,
     slug: stand.slug,
-    contestRequired:
-      stand.contest_required,
+    contestRequired: stand.contest_required,
+    mapArea: getStandMapArea(stand),
   }));
 }
 
-
-export async function getCompaniesFromSupabase(): Promise<
-  Company[]
-> {
+export async function getCompaniesFromSupabase(): Promise<Company[]> {
   const { data, error } = await supabase
     .from("companies")
     .select("*")
     .order("id");
 
   if (error) {
-    throw new Error(
-      `Error obteniendo empresas: ${error.message}`
-    );
+    throw new Error(`Error obteniendo empresas: ${error.message}`);
   }
 
   return (data ?? []).map((company) => ({
@@ -68,9 +71,8 @@ export async function getCompaniesFromSupabase(): Promise<
   }));
 }
 
-
 export async function getCompanyFromSupabase(
-  companyId: number
+  companyId: number,
 ): Promise<Company | null> {
   const { data, error } = await supabase
     .from("companies")
@@ -79,9 +81,7 @@ export async function getCompanyFromSupabase(
     .maybeSingle();
 
   if (error) {
-    throw new Error(
-      `Error obteniendo empresa: ${error.message}`
-    );
+    throw new Error(`Error obteniendo empresa: ${error.message}`);
   }
 
   if (!data) {
@@ -97,9 +97,8 @@ export async function getCompanyFromSupabase(
   };
 }
 
-
 export async function getProductsFromSupabase(
-  companyId: number
+  companyId: number,
 ): Promise<Product[]> {
   const { data, error } = await supabase
     .from("products")
@@ -108,9 +107,7 @@ export async function getProductsFromSupabase(
     .order("id");
 
   if (error) {
-    throw new Error(
-      `Error obteniendo productos: ${error.message}`
-    );
+    throw new Error(`Error obteniendo productos: ${error.message}`);
   }
 
   return (data ?? []).map((product) => ({
@@ -121,9 +118,8 @@ export async function getProductsFromSupabase(
   }));
 }
 
-
 export async function getStandFromSupabase(
-  slug: string
+  slug: string,
 ): Promise<Stand | null> {
   const { data, error } = await supabase
     .from("stands")
@@ -132,9 +128,7 @@ export async function getStandFromSupabase(
     .maybeSingle();
 
   if (error) {
-    throw new Error(
-      `Error obteniendo stand: ${error.message}`
-    );
+    throw new Error(`Error obteniendo stand: ${error.message}`);
   }
 
   if (!data) {
@@ -149,11 +143,12 @@ export async function getStandFromSupabase(
     location: data.location,
     slug: data.slug,
     contestRequired: data.contest_required,
+    mapArea: getStandMapArea(data),
   };
 }
 
 export async function getEventFromSupabase(
-  eventId: number
+  eventId: number,
 ): Promise<Event | null> {
   const { data, error } = await supabase
     .from("events")
@@ -162,9 +157,7 @@ export async function getEventFromSupabase(
     .maybeSingle();
 
   if (error) {
-    throw new Error(
-      `Error obteniendo evento: ${error.message}`
-    );
+    throw new Error(`Error obteniendo evento: ${error.message}`);
   }
 
   if (!data) {
@@ -179,13 +172,11 @@ export async function getEventFromSupabase(
   };
 }
 
-
-export async function getTalksFromSupabase(
-  eventId: number
-): Promise<Talk[]> {
+export async function getTalksFromSupabase(eventId: number): Promise<Talk[]> {
   const { data, error } = await supabase
     .from("talks")
-    .select(`
+    .select(
+      `
       *,
       companies (
         id,
@@ -194,14 +185,13 @@ export async function getTalksFromSupabase(
         category,
         logo
       )
-    `)
+    `,
+    )
     .eq("event_id", eventId)
     .order("start");
 
   if (error) {
-    throw new Error(
-      `Error obteniendo charlas: ${error.message}`
-    );
+    throw new Error(`Error obteniendo charlas: ${error.message}`);
   }
 
   return (data ?? []).map((talk) => ({
@@ -214,12 +204,9 @@ export async function getTalksFromSupabase(
       ? {
           id: talk.companies.id,
           name: talk.companies.name,
-          description:
-            talk.companies.description ?? "",
-          category:
-            talk.companies.category ?? "",
-          logo:
-            talk.companies.logo ?? "",
+          description: talk.companies.description ?? "",
+          category: talk.companies.category ?? "",
+          logo: talk.companies.logo ?? "",
         }
       : null,
     start: talk.start,
@@ -236,9 +223,7 @@ export async function getActiveEvent(): Promise<Event | null> {
     .maybeSingle();
 
   if (error) {
-    throw new Error(
-      `Error obteniendo evento activo: ${error.message}`
-    );
+    throw new Error(`Error obteniendo evento activo: ${error.message}`);
   }
 
   if (!data) {
@@ -253,9 +238,7 @@ export async function getActiveEvent(): Promise<Event | null> {
   };
 }
 
-export async function getContestStands(
-  eventId: number
-): Promise<Stand[]> {
+export async function getContestStands(eventId: number): Promise<Stand[]> {
   const { data, error } = await supabase
     .from("stands")
     .select("*")
@@ -264,9 +247,7 @@ export async function getContestStands(
     .order("id");
 
   if (error) {
-    throw new Error(
-      `Error obteniendo stands del concurso: ${error.message}`
-    );
+    throw new Error(`Error obteniendo stands del concurso: ${error.message}`);
   }
 
   return (data ?? []).map((stand) => ({
@@ -276,31 +257,23 @@ export async function getContestStands(
     number: stand.number,
     location: stand.location,
     slug: stand.slug,
-    contestRequired:
-      stand.contest_required,
+    contestRequired: stand.contest_required,
   }));
 }
 
 export async function getParticipantVisits(
-  participantId: string
+  participantId: string,
 ): Promise<number[]> {
   const { data, error } = await supabase
     .from("stand_visits")
     .select("stand_id")
-    .eq(
-      "participant_id",
-      participantId
-    );
+    .eq("participant_id", participantId);
 
   if (error) {
-    throw new Error(
-      `Error obteniendo visitas: ${error.message}`
-    );
+    throw new Error(`Error obteniendo visitas: ${error.message}`);
   }
 
-  return (data ?? []).map(
-    (visit) => visit.stand_id
-  );
+  return (data ?? []).map((visit) => visit.stand_id);
 }
 
 export async function getActiveEventTalks(): Promise<Talk[]> {

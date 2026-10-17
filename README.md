@@ -23,9 +23,11 @@ cookie `HttpOnly` y comprobación de origen.
 
 1. Ejecuta las migraciones SQL de `supabase/migrations` en orden en el editor
    SQL de Supabase. Las migraciones preparan el juego, sus intentos, el ranking
-   y las dos sesiones, y sincronizan la secuencia de IDs de empresas. Si ya
-   aplicaste las anteriores, ejecuta las migraciones posteriores que aún te
-   falten, incluida `20261017130000_sync_companies_id_sequence.sql`.
+   y las dos sesiones, sincronizan la secuencia de IDs de empresas y agregan
+   las áreas de ubicación de stands al plano. Si ya aplicaste las anteriores,
+   ejecuta las migraciones posteriores que aún te falten, incluidas
+   `20261017130000_sync_companies_id_sequence.sql` y
+   `20261017140000_stand_map_areas.sql`.
 2. Configura `SUPABASE_SERVICE_ROLE_KEY` en `.env.local` y en las variables
    privadas del entorno de despliegue. No debe tener el prefijo `NEXT_PUBLIC_`
    ni exponerse al navegador.
@@ -36,8 +38,10 @@ cookie `HttpOnly` y comprobación de origen.
 El panel permite agregar, modificar y eliminar empresas, stands y actividades
 de la feria activa, además de configurar varias imágenes para el juego. No se
 puede eliminar una empresa mientras tenga stands, actividades o productos
-asociados. La primera mitad de las imágenes se asigna a la mañana y la segunda
-a la tarde; si el total es impar, la mañana recibe una imagen adicional. El
+asociados. En la pestaña de stands, usa «Ubicar en plano» y arrastra sobre el
+mapa para marcar el área de cada stand. La primera mitad de las imágenes se
+asigna a la mañana y la segunda a la tarde; si el total es impar, la mañana
+recibe una imagen adicional. El
 administrador habilita manualmente una sesión a la vez y debe cerrarla antes de
 abrir la otra. Los intentos ya iniciados pueden terminar después del cierre.
 
@@ -46,6 +50,10 @@ Si la persona aún no está registrada, completa sus datos después del escaneo 
 la visita al stand queda guardada. Si ya está registrada, el escaneo agrega la
 visita directamente. La página del concurso no ofrece el formulario de registro
 sin un stand asociado al QR.
+
+El plano público muestra las áreas pendientes de visita en amarillo y las
+visitadas en verde para el participante de la sesión actual. La ficha de cada
+stand incluye el plano con su ubicación resaltada.
 
 El juego de `/imagen` exige que el participante se registre en `/concurso`.
 Cada persona tiene un intento por sesión, con puntaje y cronómetro acumulados

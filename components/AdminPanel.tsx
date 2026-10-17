@@ -2,6 +2,7 @@
 
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import AdminGameEditor from "@/components/AdminGameEditor";
+import AdminStandMapEditor from "@/components/AdminStandMapEditor";
 
 type Company = {
   id: number;
@@ -19,6 +20,12 @@ type Stand = {
   location: string;
   slug: string;
   contestRequired: boolean;
+  mapArea: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  } | null;
 };
 
 type Talk = {
@@ -130,6 +137,7 @@ export default function AdminPanel() {
   const [notice, setNotice] = useState<string | null>(null);
   const [standDraft, setStandDraft] = useState<StandDraft>(emptyStand);
   const [editingStand, setEditingStand] = useState<number | null>(null);
+  const [mapEditorStandId, setMapEditorStandId] = useState<number | null>(null);
   const [talkDraft, setTalkDraft] = useState<TalkDraft>(emptyTalk);
   const [editingTalk, setEditingTalk] = useState<number | null>(null);
   const [companyDraft, setCompanyDraft] = useState<CompanyDraft>(emptyCompany);
@@ -666,175 +674,207 @@ export default function AdminPanel() {
             </section>
           </div>
         ) : activeTab === "stands" ? (
-          <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-            <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-              <h2 className="text-xl font-bold text-slate-900">
-                {editingStand ? "Modificar stand" : "Agregar stand"}
-              </h2>
-              <form onSubmit={submitStand} className="mt-5 space-y-4">
-                <label className="block text-sm font-semibold text-slate-700">
-                  Empresa
-                  <select
-                    required
-                    value={standDraft.companyId}
-                    onChange={(event) =>
-                      setStandDraft({
-                        ...standDraft,
-                        companyId: event.target.value,
-                      })
-                    }
-                    className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-3"
-                  >
-                    <option value="">Seleccionar empresa</option>
-                    {data.companies.map((company) => (
-                      <option key={company.id} value={company.id}>
-                        {company.name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <div className="grid gap-4 sm:grid-cols-2">
+          <>
+            <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+              <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+                <h2 className="text-xl font-bold text-slate-900">
+                  {editingStand ? "Modificar stand" : "Agregar stand"}
+                </h2>
+                <form onSubmit={submitStand} className="mt-5 space-y-4">
                   <label className="block text-sm font-semibold text-slate-700">
-                    Número
-                    <input
+                    Empresa
+                    <select
                       required
-                      value={standDraft.number}
+                      value={standDraft.companyId}
                       onChange={(event) =>
                         setStandDraft({
                           ...standDraft,
-                          number: event.target.value,
+                          companyId: event.target.value,
                         })
                       }
-                      placeholder="A01"
-                      className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-3"
-                    />
-                  </label>
-                  <label className="block text-sm font-semibold text-slate-700">
-                    Enlace (slug)
-                    <input
-                      required
-                      pattern="[a-z0-9]+(-[a-z0-9]+)*"
-                      value={standDraft.slug}
-                      onChange={(event) =>
-                        setStandDraft({
-                          ...standDraft,
-                          slug: event.target.value
-                            .toLowerCase()
-                            .replace(/[^a-z0-9-]/g, ""),
-                        })
-                      }
-                      placeholder="empresa-ejemplo"
-                      className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-3"
-                    />
-                  </label>
-                </div>
-                <label className="block text-sm font-semibold text-slate-700">
-                  Ubicación
-                  <input
-                    required
-                    value={standDraft.location}
-                    onChange={(event) =>
-                      setStandDraft({
-                        ...standDraft,
-                        location: event.target.value,
-                      })
-                    }
-                    placeholder="Sector A · Stand 01"
-                    className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-3"
-                  />
-                </label>
-                <label className="flex items-center gap-3 text-sm font-medium text-slate-700">
-                  <input
-                    type="checkbox"
-                    checked={standDraft.contestRequired}
-                    onChange={(event) =>
-                      setStandDraft({
-                        ...standDraft,
-                        contestRequired: event.target.checked,
-                      })
-                    }
-                    className="h-4 w-4 accent-sky-600"
-                  />
-                  Requerido para completar el concurso
-                </label>
-                <div className="flex flex-wrap gap-3">
-                  <button
-                    disabled={saving || data.companies.length === 0}
-                    className="rounded-xl bg-slate-950 px-5 py-3 font-semibold text-white disabled:opacity-50"
-                  >
-                    {saving
-                      ? "Guardando..."
-                      : editingStand
-                        ? "Guardar cambios"
-                        : "Agregar stand"}
-                  </button>
-                  {editingStand && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setEditingStand(null);
-                        setStandDraft(emptyStand);
-                      }}
-                      className="rounded-xl bg-slate-100 px-5 py-3 font-semibold text-slate-700"
+                      className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3 py-3"
                     >
-                      Cancelar
+                      <option value="">Seleccionar empresa</option>
+                      {data.companies.map((company) => (
+                        <option key={company.id} value={company.id}>
+                          {company.name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <label className="block text-sm font-semibold text-slate-700">
+                      Número
+                      <input
+                        required
+                        value={standDraft.number}
+                        onChange={(event) =>
+                          setStandDraft({
+                            ...standDraft,
+                            number: event.target.value,
+                          })
+                        }
+                        placeholder="A01"
+                        className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-3"
+                      />
+                    </label>
+                    <label className="block text-sm font-semibold text-slate-700">
+                      Enlace (slug)
+                      <input
+                        required
+                        pattern="[a-z0-9]+(-[a-z0-9]+)*"
+                        value={standDraft.slug}
+                        onChange={(event) =>
+                          setStandDraft({
+                            ...standDraft,
+                            slug: event.target.value
+                              .toLowerCase()
+                              .replace(/[^a-z0-9-]/g, ""),
+                          })
+                        }
+                        placeholder="empresa-ejemplo"
+                        className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-3"
+                      />
+                    </label>
+                  </div>
+                  <label className="block text-sm font-semibold text-slate-700">
+                    Ubicación
+                    <input
+                      required
+                      value={standDraft.location}
+                      onChange={(event) =>
+                        setStandDraft({
+                          ...standDraft,
+                          location: event.target.value,
+                        })
+                      }
+                      placeholder="Sector A · Stand 01"
+                      className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-3"
+                    />
+                  </label>
+                  <label className="flex items-center gap-3 text-sm font-medium text-slate-700">
+                    <input
+                      type="checkbox"
+                      checked={standDraft.contestRequired}
+                      onChange={(event) =>
+                        setStandDraft({
+                          ...standDraft,
+                          contestRequired: event.target.checked,
+                        })
+                      }
+                      className="h-4 w-4 accent-sky-600"
+                    />
+                    Requerido para completar el concurso
+                  </label>
+                  <div className="flex flex-wrap gap-3">
+                    <button
+                      disabled={saving || data.companies.length === 0}
+                      className="rounded-xl bg-slate-950 px-5 py-3 font-semibold text-white disabled:opacity-50"
+                    >
+                      {saving
+                        ? "Guardando..."
+                        : editingStand
+                          ? "Guardar cambios"
+                          : "Agregar stand"}
                     </button>
+                    {editingStand && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingStand(null);
+                          setStandDraft(emptyStand);
+                        }}
+                        className="rounded-xl bg-slate-100 px-5 py-3 font-semibold text-slate-700"
+                      >
+                        Cancelar
+                      </button>
+                    )}
+                  </div>
+                  {data.companies.length === 0 && (
+                    <p className="text-sm text-amber-800">
+                      No hay empresas registradas para asociar a un stand.
+                    </p>
                   )}
-                </div>
-                {data.companies.length === 0 && (
-                  <p className="text-sm text-amber-800">
-                    No hay empresas registradas para asociar a un stand.
-                  </p>
-                )}
-              </form>
-            </section>
+                </form>
+              </section>
 
-            <section className="space-y-3">
-              <h2 className="text-xl font-bold text-slate-900">
-                Stands registrados ({data.stands.length})
-              </h2>
-              {data.stands.length === 0 ? (
-                <p className="rounded-2xl bg-white p-6 text-sm text-slate-500">
-                  Todavía no hay stands para esta feria.
-                </p>
-              ) : (
-                data.stands.map((stand) => (
-                  <article
-                    key={stand.id}
-                    className="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200"
-                  >
-                    <div>
-                      <h3 className="font-bold text-slate-900">
-                        {stand.number} · {companyName(stand.companyId)}
-                      </h3>
-                      <p className="mt-1 text-sm text-slate-500">
-                        {stand.location} · /stands/{stand.slug}
-                      </p>
-                      <p className="mt-1 text-xs text-slate-500">
-                        {stand.contestRequired
-                          ? "Participa en el concurso"
-                          : "No requerido para el concurso"}
-                      </p>
-                    </div>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => editStand(stand)}
-                        className="rounded-lg bg-sky-50 px-3 py-2 text-sm font-semibold text-sky-800"
-                      >
-                        Modificar
-                      </button>
-                      <button
-                        onClick={() => void deleteStand(stand)}
-                        className="rounded-lg bg-red-50 px-3 py-2 text-sm font-semibold text-red-700"
-                      >
-                        Eliminar
-                      </button>
-                    </div>
-                  </article>
-                ))
-              )}
-            </section>
-          </div>
+              <section className="space-y-3">
+                <h2 className="text-xl font-bold text-slate-900">
+                  Stands registrados ({data.stands.length})
+                </h2>
+                {data.stands.length === 0 ? (
+                  <p className="rounded-2xl bg-white p-6 text-sm text-slate-500">
+                    Todavía no hay stands para esta feria.
+                  </p>
+                ) : (
+                  data.stands.map((stand) => (
+                    <article
+                      key={stand.id}
+                      className="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200"
+                    >
+                      <div>
+                        <h3 className="font-bold text-slate-900">
+                          {stand.number} · {companyName(stand.companyId)}
+                        </h3>
+                        <p className="mt-1 text-sm text-slate-500">
+                          {stand.location} · /stands/{stand.slug}
+                        </p>
+                        <p className="mt-1 text-xs text-slate-500">
+                          {stand.contestRequired
+                            ? "Participa en el concurso"
+                            : "No requerido para el concurso"}
+                        </p>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() =>
+                            setMapEditorStandId((current) =>
+                              current === stand.id ? null : stand.id,
+                            )
+                          }
+                          className="rounded-lg bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-800"
+                        >
+                          {mapEditorStandId === stand.id
+                            ? "Cerrar plano"
+                            : stand.mapArea
+                              ? "Editar ubicación"
+                              : "Ubicar en plano"}
+                        </button>
+                        <button
+                          onClick={() => editStand(stand)}
+                          className="rounded-lg bg-sky-50 px-3 py-2 text-sm font-semibold text-sky-800"
+                        >
+                          Modificar
+                        </button>
+                        <button
+                          onClick={() => void deleteStand(stand)}
+                          className="rounded-lg bg-red-50 px-3 py-2 text-sm font-semibold text-red-700"
+                        >
+                          Eliminar
+                        </button>
+                      </div>
+                    </article>
+                  ))
+                )}
+              </section>
+            </div>
+            {mapEditorStandId !== null &&
+              (() => {
+                const selectedStand = data.stands.find(
+                  (stand) => stand.id === mapEditorStandId,
+                );
+                return selectedStand ? (
+                  <div className="mt-6">
+                    <AdminStandMapEditor
+                      key={selectedStand.id}
+                      stands={data.stands}
+                      selectedStand={selectedStand}
+                      onSaved={loadData}
+                    />
+                  </div>
+                ) : null;
+              })()}
+          </>
         ) : (
           <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
             <section className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">

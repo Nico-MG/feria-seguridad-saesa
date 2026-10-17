@@ -41,7 +41,7 @@ export async function GET(request: Request) {
       supabase
         .from("stands")
         .select(
-          "id, event_id, company_id, number, location, slug, contest_required",
+          "id, event_id, company_id, number, location, slug, contest_required, map_x, map_y, map_width, map_height",
         )
         .eq("event_id", event.id)
         .order("id"),
@@ -75,6 +75,18 @@ export async function GET(request: Request) {
         location: stand.location,
         slug: stand.slug,
         contestRequired: stand.contest_required,
+        mapArea:
+          stand.map_x === null ||
+          stand.map_y === null ||
+          stand.map_width === null ||
+          stand.map_height === null
+            ? null
+            : {
+                x: Number(stand.map_x),
+                y: Number(stand.map_y),
+                width: Number(stand.map_width),
+                height: Number(stand.map_height),
+              },
       })),
       talks: (talks ?? []).map((talk) => ({
         id: talk.id,

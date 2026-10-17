@@ -33,6 +33,12 @@ export type Stand = {
   location: string;
   slug: string;
   contestRequired: boolean;
+  mapArea?: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  } | null;
 };
 
 export type Product = {

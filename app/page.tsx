@@ -4,24 +4,22 @@ import QuickLinks from "@/components/QuickLinks";
 import LiveEvent from "@/components/LiveEvent";
 import UpcomingEvents from "@/components/UpcomingEvents";
 
-import {
-  getActiveEventTalks,
-} from "@/lib/supabaseData";
+import { getActiveEvent, getTalksFromSupabase } from "@/lib/supabaseData";
 
 export default async function HomePage() {
-  const talks =
-    await getActiveEventTalks();
+  const event = await getActiveEvent();
+  const talks = event ? await getTalksFromSupabase(event.id) : [];
 
   return (
     <main className="min-h-screen bg-slate-50">
       <Header />
 
-      <Hero />
+      <Hero eventDate={event?.date ?? null} />
 
       <div className="mx-auto max-w-5xl px-5 pb-12">
         <QuickLinks />
-  <LiveEvent talks={talks} />
-  <UpcomingEvents talks={talks} />
+        <LiveEvent talks={talks} />
+        <UpcomingEvents talks={talks} />
       </div>
     </main>
   );
