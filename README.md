@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Feria de Seguridad SAESA
 
-## Getting Started
+Aplicación web para consultar las empresas y stands, revisar el programa de
+charlas, registrar visitas para el concurso y jugar a encontrar riesgos en una
+imagen.
 
-First, run the development server:
+## Requisitos y desarrollo local
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Node.js compatible con Next.js 16.
+- Un proyecto Supabase con las tablas usadas por la aplicación: `events`,
+  `companies`, `stands`, `talks`, `participants`, `stand_visits` y
+  `contest_entries`.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. Instala dependencias: `npm install`.
+2. Copia `.env.example` a `.env.local` y completa las variables.
+3. Ejecuta `npm run dev` y abre `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Panel de administración
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+El panel está en `/admin` y no aparece en la navegación pública. La ruta no es
+un mecanismo de seguridad: las operaciones se protegen con una sesión firmada,
+cookie `HttpOnly` y comprobación de origen.
 
-## Learn More
+1. Ejecuta las migraciones SQL de `supabase/migrations` en orden en el editor
+   SQL de Supabase. Las migraciones preparan el juego, sus intentos, el ranking
+   y las dos sesiones, y sincronizan la secuencia de IDs de empresas. Si ya
+   aplicaste las anteriores, ejecuta las migraciones posteriores que aún te
+   falten, incluida `20261017130000_sync_companies_id_sequence.sql`.
+2. Configura `SUPABASE_SERVICE_ROLE_KEY` en `.env.local` y en las variables
+   privadas del entorno de despliegue. No debe tener el prefijo `NEXT_PUBLIC_`
+   ni exponerse al navegador.
+3. Define `ADMIN_USERNAME`, `ADMIN_PASSWORD` y `ADMIN_SESSION_SECRET` (mínimo
+   32 caracteres aleatorios). No uses los valores de ejemplo.
+4. Reinicia la aplicación y entra a `/admin`.
 
-To learn more about Next.js, take a look at the following resources:
+El panel permite agregar, modificar y eliminar empresas, stands y actividades
+de la feria activa, además de configurar varias imágenes para el juego. No se
+puede eliminar una empresa mientras tenga stands, actividades o productos
+asociados. La primera mitad de las imágenes se asigna a la mañana y la segunda
+a la tarde; si el total es impar, la mañana recibe una imagen adicional. El
+administrador habilita manualmente una sesión a la vez y debe cerrarla antes de
+abrir la otra. Los intentos ya iniciados pueden terminar después del cierre.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+El registro al concurso se inicia escaneando el QR de un stand participante.
+Si la persona aún no está registrada, completa sus datos después del escaneo y
+la visita al stand queda guardada. Si ya está registrada, el escaneo agrega la
+visita directamente. La página del concurso no ofrece el formulario de registro
+sin un stand asociado al QR.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+El juego de `/imagen` exige que el participante se registre en `/concurso`.
+Cada persona tiene un intento por sesión, con puntaje y cronómetro acumulados
+para todas las imágenes de esa sesión. Cada acierto suma 100 puntos; los
+primeros tres fallos no descuentan y cada fallo adicional resta 10. El ranking
+de `/concurso` es una tabla combinada con la sesión indicada en cada resultado,
+ordenada por puntaje y luego por menor tiempo.
 
-## Deploy on Vercel
+## Comandos
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `npm run dev`: servidor de desarrollo.
+- `npm run lint`: ESLint.
+- `npm run build`: compilación de producción.

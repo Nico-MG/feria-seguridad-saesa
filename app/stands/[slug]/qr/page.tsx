@@ -5,9 +5,9 @@ import StandQRCode from "@/components/StandQRCode";
 import PrintButton from "@/components/PrintButton";
 
 import {
-  getCompanyById,
-  getStandBySlug,
-} from "@/lib/eventData";
+  getCompanyFromSupabase,
+  getStandFromSupabase,
+} from "@/lib/supabaseData";
 
 type QRPageProps = {
   params: Promise<{
@@ -15,12 +15,10 @@ type QRPageProps = {
   }>;
 };
 
-export default async function QRPage({
-  params,
-}: QRPageProps) {
+export default async function QRPage({ params }: QRPageProps) {
   const { slug } = await params;
 
-  const stand = getStandBySlug(slug);
+  const stand = await getStandFromSupabase(slug);
 
   if (!stand) {
     return (
@@ -43,9 +41,7 @@ export default async function QRPage({
     );
   }
 
-  const company = getCompanyById(
-    stand.companyId
-  );
+  const company = await getCompanyFromSupabase(stand.companyId);
 
   if (!company) {
     return (
@@ -83,15 +79,11 @@ export default async function QRPage({
               {company.name}
             </h1>
 
-            <p className="mt-2 text-sm text-slate-500">
-              Código QR del stand
-            </p>
+            <p className="mt-2 text-sm text-slate-500">Código QR del stand</p>
           </div>
 
           <div className="mt-8">
-            <StandQRCode
-              slug={stand.slug}
-            />
+            <StandQRCode slug={stand.slug} />
           </div>
 
           <div className="mt-8 rounded-2xl bg-slate-50 p-4">
@@ -100,9 +92,9 @@ export default async function QRPage({
             </p>
 
             <p className="mt-2 text-sm leading-6 text-slate-500">
-              Imprime este código y colócalo en
-              el stand para que los asistentes
-              puedan escanearlo con su teléfono.
+              Imprime este código y colócalo en el stand. Al escanearlo, los
+              asistentes podrán registrarse en el concurso y sumar su visita a
+              este stand.
             </p>
           </div>
 

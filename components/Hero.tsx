@@ -14,7 +14,7 @@ export default function Hero() {
           <div className="inline-flex items-center gap-2 rounded-full border border-sky-400/20 bg-sky-400/10 px-3 py-1.5">
             <span className="h-2 w-2 rounded-full bg-sky-400" />
             <p className="text-xs font-bold uppercase tracking-wider text-sky-300 sm:text-sm">
-              25 de octubre de 2026
+              29 de octubre de 2026
             </p>
           </div>
 
