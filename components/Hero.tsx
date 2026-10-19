@@ -95,8 +95,8 @@ export default function Hero({ eventDate }: HeroProps) {
             Hotel Sonesta, Osorno, Chile
           </p>
 
-          <h2 className="mt-6 max-w-2xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
-            Seguridad que <span className="text-sky-400">nos conecta</span>
+          <h2 className="mt-6 max-w-5xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
+            Cien años de seguridad y <span className="text-sky-400">resiliencia energética</span>
           </h2>
 
           <p className="mt-5 max-w-xl text-base leading-7 text-slate-300 sm:text-lg sm:leading-8">
