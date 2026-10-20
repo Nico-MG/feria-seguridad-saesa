@@ -36,7 +36,9 @@ export async function GET(request: Request) {
     ] = await Promise.all([
       supabase
         .from("companies")
-        .select("id, name, description, category, logo")
+        .select(
+          "id, name, description, category, logo, website_url, instagram_url, facebook_url, youtube_url",
+        )
         .order("name"),
       supabase
         .from("stands")
@@ -66,6 +68,10 @@ export async function GET(request: Request) {
         description: company.description ?? "",
         category: company.category ?? "",
         logo: company.logo ?? "",
+        websiteUrl: company.website_url ?? "",
+        instagramUrl: company.instagram_url ?? "",
+        facebookUrl: company.facebook_url ?? "",
+        youtubeUrl: company.youtube_url ?? "",
       })),
       stands: (stands ?? []).map((stand) => ({
         id: stand.id,

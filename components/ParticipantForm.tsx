@@ -16,17 +16,12 @@ type ParticipantFormProps = {
 type Participant = {
   id: string;
   name: string;
-  email: string;
-  phone: string | null;
-  registered_at: string;
 };
 
 export default function ParticipantForm({
   onRegistered,
 }: ParticipantFormProps) {
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -44,7 +39,7 @@ export default function ParticipantForm({
         const { data, error } =
           await supabase
             .from("participants")
-            .select("*")
+            .select("id, name")
             .eq("id", session.user.id)
             .maybeSingle();
 
@@ -57,8 +52,6 @@ export default function ParticipantForm({
             data as Participant;
 
           setName(participant.name);
-          setEmail(participant.email);
-          setPhone(participant.phone ?? "");
           setSubmitted(true);
         }
       } catch (error) {
@@ -79,6 +72,11 @@ export default function ParticipantForm({
     event: FormEvent<HTMLFormElement>
   ) {
     event.preventDefault();
+    const trimmedName = name.trim();
+    if (!trimmedName) {
+      setError("Ingresa tu nombre.");
+      return;
+    }
 
     setSaving(true);
     setError(null);
@@ -92,12 +90,14 @@ export default function ParticipantForm({
           .from("participants")
           .upsert({
             id: session.user.id,
-            name: name.trim(),
-            email: email.trim(),
-            phone: phone.trim(),
+            name: trimmedName,
           });
 
       if (error) {
+        if (error.code === "23505") {
+          setError("Ese nombre ya está registrado. Ingresa otro nombre.");
+          return;
+        }
         throw error;
       }
 
@@ -108,7 +108,7 @@ export default function ParticipantForm({
       console.error(error);
 
       setError(
-        "No fue posible guardar tus datos. Inténtalo nuevamente."
+        "No fue posible guardar tu registro. Inténtalo nuevamente."
       );
     } finally {
       setSaving(false);
@@ -155,51 +155,18 @@ export default function ParticipantForm({
     >
       <div>
         <label className="text-sm font-semibold text-slate-700">
-          Nombre completo
+          Nombre
         </label>
 
         <input
           required
+          maxLength={200}
           value={name}
           onChange={(event) =>
             setName(event.target.value)
           }
           className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-sky-500"
           placeholder="Juan Pérez"
-        />
-      </div>
-
-      <div>
-        <label className="text-sm font-semibold text-slate-700">
-          Correo electrónico
-        </label>
-
-        <input
-          required
-          type="email"
-          value={email}
-          onChange={(event) =>
-            setEmail(event.target.value)
-          }
-          className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-sky-500"
-          placeholder="juan@empresa.cl"
-        />
-      </div>
-
-      <div>
-        <label className="text-sm font-semibold text-slate-700">
-          Teléfono
-        </label>
-
-        <input
-          required
-          type="tel"
-          value={phone}
-          onChange={(event) =>
-            setPhone(event.target.value)
-          }
-          className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-sky-500"
-          placeholder="+56 9 1234 5678"
         />
       </div>
 

@@ -23,6 +23,10 @@ export type Company = {
   description: string;
   category: string;
   logo: string;
+  websiteUrl?: string | null;
+  instagramUrl?: string | null;
+  facebookUrl?: string | null;
+  youtubeUrl?: string | null;
 };
 
 export type Stand = {
@@ -51,8 +55,8 @@ export type Product = {
 export type Participant = {
   id: string;
   name: string;
-  email: string;
-  phone: string;
+  email?: string | null;
+  phone?: string | null;
   registeredAt: string;
 };
 
@@ -81,7 +85,7 @@ export type Announcement = {
 export type LocalParticipant = {
   id: string;
   name: string;
-  email: string;
-  phone: string;
+  email?: string | null;
+  phone?: string | null;
   registeredAt: string;
 };

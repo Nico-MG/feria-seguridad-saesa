@@ -24,8 +24,6 @@ import type { Event, Stand } from "@/types/event";
 type Participant = {
   id: string;
   name: string;
-  email: string;
-  phone: string | null;
 };
 
 const subscribeToContestLocation = (callback: () => void) => {
@@ -70,7 +68,7 @@ export default function ConcursoPage() {
     const stands = await getContestStands(activeEvent.id);
     const { data: participantData, error: participantError } = await supabase
       .from("participants")
-      .select("*")
+      .select("id, name")
       .eq("id", session.user.id)
       .maybeSingle();
 

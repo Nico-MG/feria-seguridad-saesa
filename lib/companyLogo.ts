@@ -11,12 +11,40 @@ export type CompanyInput = {
   name: string;
   description: string;
   category: string;
+  website_url: string;
+  instagram_url: string;
+  facebook_url: string;
+  youtube_url: string;
 };
+
+function parseOptionalUrl(value: unknown) {
+  if (value === undefined || value === null) return "";
+  if (typeof value !== "string" || value.length > 2048) {
+    return null;
+  }
+
+  const trimmed = value.trim();
+  if (!trimmed) return "";
+
+  try {
+    const url = new URL(trimmed);
+    if (url.protocol !== "https:" && url.protocol !== "http:") {
+      return null;
+    }
+    return url.toString();
+  } catch {
+    return null;
+  }
+}
 
 export function parseCompanyInput(value: unknown): CompanyInput | null {
   if (!value || typeof value !== "object") return null;
 
   const input = value as Record<string, unknown>;
+  const websiteUrl = parseOptionalUrl(input.website_url);
+  const instagramUrl = parseOptionalUrl(input.instagram_url);
+  const facebookUrl = parseOptionalUrl(input.facebook_url);
+  const youtubeUrl = parseOptionalUrl(input.youtube_url);
   if (
     typeof input.name !== "string" ||
     !input.name.trim() ||
@@ -24,7 +52,11 @@ export function parseCompanyInput(value: unknown): CompanyInput | null {
     typeof input.description !== "string" ||
     input.description.length > 5000 ||
     typeof input.category !== "string" ||
-    input.category.length > 200
+    input.category.length > 200 ||
+    websiteUrl === null ||
+    instagramUrl === null ||
+    facebookUrl === null ||
+    youtubeUrl === null
   ) {
     return null;
   }
@@ -33,6 +65,10 @@ export function parseCompanyInput(value: unknown): CompanyInput | null {
     name: input.name.trim(),
     description: input.description.trim(),
     category: input.category.trim(),
+    website_url: websiteUrl,
+    instagram_url: instagramUrl,
+    facebook_url: facebookUrl,
+    youtube_url: youtubeUrl,
   };
 }
 

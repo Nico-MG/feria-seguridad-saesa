@@ -24,8 +24,7 @@ export function getParticipant():
 
     if (
       !participant.id ||
-      !participant.name ||
-      !participant.email
+      !participant.name
     ) {
       return null;
     }

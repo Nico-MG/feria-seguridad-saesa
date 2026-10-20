@@ -17,6 +17,10 @@ type Company = {
   description: string;
   category: string;
   logo: string;
+  websiteUrl: string;
+  instagramUrl: string;
+  facebookUrl: string;
+  youtubeUrl: string;
 };
 
 type Stand = {
@@ -79,6 +83,10 @@ const emptyCompany: CompanyDraft = {
   description: "",
   category: "",
   logo: "",
+  websiteUrl: "",
+  instagramUrl: "",
+  facebookUrl: "",
+  youtubeUrl: "",
 };
 
 const emptyStand: StandDraft = {
@@ -374,6 +382,10 @@ export default function AdminPanel() {
           name: companyDraft.name,
           description: companyDraft.description,
           category: companyDraft.category,
+          website_url: companyDraft.websiteUrl,
+          instagram_url: companyDraft.instagramUrl,
+          facebook_url: companyDraft.facebookUrl,
+          youtube_url: companyDraft.youtubeUrl,
         }),
       );
       if (companyLogoFile) formData.append("logo", companyLogoFile);
@@ -414,6 +426,10 @@ export default function AdminPanel() {
       description: company.description,
       category: company.category,
       logo: company.logo,
+      websiteUrl: company.websiteUrl,
+      instagramUrl: company.instagramUrl,
+      facebookUrl: company.facebookUrl,
+      youtubeUrl: company.youtubeUrl,
     });
     setCompanyLogoFile(null);
     if (companyLogoInputRef.current) {
@@ -609,6 +625,34 @@ export default function AdminPanel() {
                     className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-3"
                   />
                 </label>
+                {(
+                  [
+                    ["websiteUrl", "Página web"],
+                    ["instagramUrl", "Instagram"],
+                    ["facebookUrl", "Facebook"],
+                    ["youtubeUrl", "YouTube"],
+                  ] as const
+                ).map(([field, label]) => (
+                  <label
+                    key={field}
+                    className="block text-sm font-semibold text-slate-700"
+                  >
+                    {label}
+                    <input
+                      type="url"
+                      maxLength={2048}
+                      value={companyDraft[field]}
+                      onChange={(event) =>
+                        setCompanyDraft({
+                          ...companyDraft,
+                          [field]: event.target.value,
+                        })
+                      }
+                      placeholder="https://"
+                      className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-3"
+                    />
+                  </label>
+                ))}
                 <label className="block text-sm font-semibold text-slate-700">
                   Logo de la empresa
                   <input
@@ -692,6 +736,28 @@ export default function AdminPanel() {
                             {company.description}
                           </p>
                         )}
+                        <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-sm">
+                          {(
+                            [
+                              ["websiteUrl", "Página web"],
+                              ["instagramUrl", "Instagram"],
+                              ["facebookUrl", "Facebook"],
+                              ["youtubeUrl", "YouTube"],
+                            ] as const
+                          ).map(([field, label]) =>
+                            company[field] ? (
+                              <a
+                                key={field}
+                                href={company[field]}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="font-semibold text-sky-700 underline"
+                              >
+                                {label}
+                              </a>
+                            ) : null,
+                          )}
+                        </div>
                       </div>
                     </div>
                     <div className="flex gap-2">

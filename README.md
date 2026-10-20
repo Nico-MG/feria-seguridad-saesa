@@ -24,10 +24,15 @@ cookie `HttpOnly` y comprobación de origen.
 1. Ejecuta las migraciones SQL de `supabase/migrations` en orden en el editor
    SQL de Supabase. Las migraciones preparan el juego, sus intentos, el ranking
    y las dos sesiones, sincronizan la secuencia de IDs de empresas y agregan
-   las áreas de ubicación de stands al plano. Si ya aplicaste las anteriores,
-   ejecuta las migraciones posteriores que aún te falten, incluidas
-   `20261017130000_sync_companies_id_sequence.sql` y
-   `20261017140000_stand_map_areas.sql`.
+   las áreas de ubicación de stands al plano. La migración
+   `20261020170000_company_links_and_unique_participant_names.sql` agrega los
+   enlaces web y redes sociales de empresas, y permite que el registro requiera
+   solo un nombre único. Si ya hay participantes con nombres repetidos
+   (ignorando mayúsculas y espacios al inicio o al final), resuelve esos
+   duplicados antes de aplicar esa migración. Si ya aplicaste las anteriores,
+   ejecuta las posteriores que aún te falten, incluidas
+   `20261017130000_sync_companies_id_sequence.sql`,
+   `20261017140000_stand_map_areas.sql` y la nueva migración.
 2. Configura `SUPABASE_SERVICE_ROLE_KEY` en `.env.local` y en las variables
    privadas del entorno de despliegue. No debe tener el prefijo `NEXT_PUBLIC_`
    ni exponerse al navegador.
@@ -35,9 +40,10 @@ cookie `HttpOnly` y comprobación de origen.
    32 caracteres aleatorios). No uses los valores de ejemplo.
 4. Reinicia la aplicación y entra a `/admin`.
 
-El panel permite agregar, modificar y eliminar empresas, stands y actividades
-de la feria activa, subir logos JPG, PNG o WebP de hasta 5 MB para las empresas
-y configurar varias imágenes para el juego. Los logos se guardan en el bucket
+El panel permite agregar y modificar empresas con su página web y enlaces
+opcionales a Instagram, Facebook y YouTube, administrar stands y actividades de
+la feria activa, subir logos JPG, PNG o WebP de hasta 5 MB para las empresas y
+configurar varias imágenes para el juego. Los logos se guardan en el bucket
 público de Supabase Storage `feria-game-images`, que debe estar disponible junto
 con el almacenamiento de imágenes del juego. No se puede eliminar una empresa
 mientras tenga stands, actividades o productos asociados. En la pestaña de
@@ -48,10 +54,11 @@ administrador habilita manualmente una sesión a la vez y debe cerrarla antes de
 abrir la otra. Los intentos ya iniciados pueden terminar después del cierre.
 
 El registro al concurso se inicia escaneando el QR de un stand participante.
-Si la persona aún no está registrada, completa sus datos después del escaneo y
-la visita al stand queda guardada. Si ya está registrada, el escaneo agrega la
-visita directamente. La página del concurso no ofrece el formulario de registro
-sin un stand asociado al QR.
+Si la persona aún no está registrada, ingresa un nombre único después del
+escaneo y la visita al stand queda guardada. No se solicita correo electrónico
+ni teléfono. Si ya está registrada, el escaneo agrega la visita directamente.
+La página del concurso no ofrece el formulario de registro sin un stand
+asociado al QR.
 
 El plano público muestra las áreas pendientes de visita en amarillo y las
 visitadas en verde para el participante de la sesión actual. La ficha de cada

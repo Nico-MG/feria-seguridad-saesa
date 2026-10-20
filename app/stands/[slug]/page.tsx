@@ -2,13 +2,11 @@ import Link from "next/link";
 
 import Header from "@/components/Header";
 import CompanyLogo from "@/components/CompanyLogo";
-import ProductCard from "@/components/ProductCard";
 import RegisterVisitButton from "@/components/RegisterVisitButton";
 import StandLocationMap from "@/components/StandLocationMap";
 
 import {
   getCompanyFromSupabase,
-  getProductsFromSupabase,
   getStandFromSupabase,
 } from "@/lib/supabaseData";
 
@@ -44,10 +42,7 @@ export default async function StandPage({ params }: StandPageProps) {
     );
   }
 
-  const [company, products] = await Promise.all([
-    getCompanyFromSupabase(stand.companyId),
-    getProductsFromSupabase(stand.companyId),
-  ]);
+  const company = await getCompanyFromSupabase(stand.companyId);
 
   if (!company) {
     return (
@@ -123,30 +118,42 @@ export default async function StandPage({ params }: StandPageProps) {
           </div>
         </section>
 
-        {/* Productos */}
-
-        <section className="mt-8">
-          <div className="mb-4">
-            <p className="text-sm font-semibold text-sky-600">SOLUCIONES</p>
-
-            <h2 className="mt-1 text-2xl font-bold text-slate-900">
-              Productos y soluciones
-            </h2>
+        <section className="mt-8 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+          <p className="text-sm font-semibold text-sky-600">
+            MÁS INFORMACIÓN
+          </p>
+          <h2 className="mt-1 text-2xl font-bold text-slate-900">
+            Conoce más de {company.name}
+          </h2>
+          <div className="mt-5 flex flex-wrap gap-3">
+            {[
+              ["Página web", company.websiteUrl],
+              ["Instagram", company.instagramUrl],
+              ["Facebook", company.facebookUrl],
+              ["YouTube", company.youtubeUrl],
+            ].map(
+              ([label, url]) =>
+                url && (
+                  <a
+                    key={label}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-xl bg-sky-50 px-4 py-3 text-sm font-semibold text-sky-800 transition hover:bg-sky-100"
+                  >
+                    {label}
+                  </a>
+                ),
+            )}
+            {!company.websiteUrl &&
+              !company.instagramUrl &&
+              !company.facebookUrl &&
+              !company.youtubeUrl && (
+                <p className="text-sm text-slate-500">
+                  Esta empresa todavía no ha agregado enlaces.
+                </p>
+              )}
           </div>
-
-          {products.length === 0 ? (
-            <div className="rounded-2xl bg-white p-6 text-center ring-1 ring-slate-200">
-              <p className="text-sm text-slate-500">
-                Esta empresa todavía no tiene productos registrados.
-              </p>
-            </div>
-          ) : (
-            <div className="grid gap-4 sm:grid-cols-2">
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          )}
         </section>
 
         {/* Concurso */}
