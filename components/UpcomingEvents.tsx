@@ -69,7 +69,7 @@ export default function UpcomingEvents({
 
             <div className="p-6 sm:p-8">
               <span className="inline-flex rounded-full bg-sky-400/15 px-3 py-1 text-xs font-bold text-sky-300">
-                PRÓXIMA CHARLA
+                PRÓXIMO EVENTO
               </span>
 
               <p className="mt-6 text-sm font-semibold text-sky-300">
