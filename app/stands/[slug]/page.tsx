@@ -99,16 +99,6 @@ export default async function StandPage({ params }: StandPageProps) {
               {company.description}
             </p>
 
-            <div className="mt-5 rounded-xl bg-slate-50 p-4">
-              <p className="text-sm font-semibold text-slate-700">
-                📍 Ubicación
-              </p>
-
-              <p className="mt-1 text-sm text-slate-500">{stand.location}</p>
-            </div>
-
-            <StandLocationMap stand={stand} />
-
             <Link
               href={`/stands/${stand.slug}/qr`}
               className="mt-5 inline-flex w-full items-center justify-center rounded-xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
@@ -179,16 +169,11 @@ export default async function StandPage({ params }: StandPageProps) {
 
         {/* Mapa */}
 
-        <section className="mt-8">
-          <div className="rounded-2xl bg-white p-6 ring-1 ring-slate-200">
-            <h2 className="text-lg font-bold text-slate-900">
-              Ubicación del stand
-            </h2>
-
-            <div className="mt-4 flex h-48 items-center justify-center rounded-xl bg-slate-100">
-              <p className="text-sm text-slate-400">🗺️ Mapa de la feria</p>
-            </div>
-          </div>
+        <section className="mt-8 rounded-2xl bg-white p-6 ring-1 ring-slate-200">
+          <h2 className="text-lg font-bold text-slate-900">
+            Ubicación del stand
+          </h2>
+          <StandLocationMap stand={stand} />
         </section>
       </div>
     </main>

@@ -19,12 +19,6 @@ const links = [
     description: "Participa y gana",
     href: "/concurso",
   },
-  {
-    icon: "📍",
-    title: "Ubicación",
-    description: "Cómo llegar",
-    href: "/ubicacion",
-  },
 ];
 
 export default function QuickLinks() {
@@ -34,7 +28,7 @@ export default function QuickLinks() {
         Explora la feria
       </h2>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {links.map((link) => (
           <Link
             key={link.title}
