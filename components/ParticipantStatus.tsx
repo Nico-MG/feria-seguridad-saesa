@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import Header from "@/components/Header";
+import CompanyLogo from "@/components/CompanyLogo";
 import ContestForm from "@/components/ContestForm";
 
 import { stands } from "@/data/mock";
@@ -156,17 +157,17 @@ export default function ConcursoPage() {
                       : "ring-slate-200"
                   }`}
                 >
-                  <div
-                    className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-xl ${
-                      visited
-                        ? "bg-green-100"
-                        : "bg-slate-100"
-                    }`}
-                  >
-                    {visited
-                      ? "✓"
-                      : company.logo}
-                  </div>
+                  {visited ? (
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-green-100 text-xl">
+                      ✓
+                    </div>
+                  ) : (
+                    <CompanyLogo
+                      logo={company.logo}
+                      name={company.name}
+                      className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-slate-100"
+                    />
+                  )}
 
                   <div className="min-w-0 flex-1">
                     <p className="font-bold text-slate-900">

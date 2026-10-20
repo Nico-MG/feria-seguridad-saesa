@@ -36,12 +36,14 @@ cookie `HttpOnly` y comprobación de origen.
 4. Reinicia la aplicación y entra a `/admin`.
 
 El panel permite agregar, modificar y eliminar empresas, stands y actividades
-de la feria activa, además de configurar varias imágenes para el juego. No se
-puede eliminar una empresa mientras tenga stands, actividades o productos
-asociados. En la pestaña de stands, usa «Ubicar en plano» y arrastra sobre el
-mapa para marcar el área de cada stand. La primera mitad de las imágenes se
-asigna a la mañana y la segunda a la tarde; si el total es impar, la mañana
-recibe una imagen adicional. El
+de la feria activa, subir logos JPG, PNG o WebP de hasta 5 MB para las empresas
+y configurar varias imágenes para el juego. Los logos se guardan en el bucket
+público de Supabase Storage `feria-game-images`, que debe estar disponible junto
+con el almacenamiento de imágenes del juego. No se puede eliminar una empresa
+mientras tenga stands, actividades o productos asociados. En la pestaña de
+stands, usa «Ubicar en plano» y arrastra sobre el mapa para marcar el área de
+cada stand. La primera mitad de las imágenes se asigna a la mañana y la segunda
+a la tarde; si el total es impar, la mañana recibe una imagen adicional. El
 administrador habilita manualmente una sesión a la vez y debe cerrarla antes de
 abrir la otra. Los intentos ya iniciados pueden terminar después del cierre.
 

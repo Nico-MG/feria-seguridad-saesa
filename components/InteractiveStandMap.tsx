@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import CompanyLogo from "@/components/CompanyLogo";
 import { useEffect, useState } from "react";
 
 import type { Company, Stand } from "@/types/event";
@@ -193,9 +194,11 @@ export default function InteractiveStandMap({ stands, companies }: Props) {
               <p className="text-xs font-bold uppercase tracking-wider text-sky-600">
                 Stand {selectedStand.number}
               </p>
-              <div className="mt-4 flex h-14 w-14 items-center justify-center rounded-xl bg-sky-50 text-2xl">
-                {selectedCompany.logo}
-              </div>
+              <CompanyLogo
+                logo={selectedCompany.logo}
+                name={selectedCompany.name}
+                className="mt-4 flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl bg-sky-50"
+              />
               <h3 className="mt-4 text-xl font-bold text-slate-900">
                 {selectedCompany.name}
               </h3>

@@ -1,8 +1,15 @@
 "use client";
 
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import {
+  FormEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import AdminGameEditor from "@/components/AdminGameEditor";
 import AdminStandMapEditor from "@/components/AdminStandMapEditor";
+import CompanyLogo from "@/components/CompanyLogo";
 
 type Company = {
   id: number;
@@ -142,6 +149,8 @@ export default function AdminPanel() {
   const [editingTalk, setEditingTalk] = useState<number | null>(null);
   const [companyDraft, setCompanyDraft] = useState<CompanyDraft>(emptyCompany);
   const [editingCompany, setEditingCompany] = useState<number | null>(null);
+  const [companyLogoFile, setCompanyLogoFile] = useState<File | null>(null);
+  const companyLogoInputRef = useRef<HTMLInputElement>(null);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -358,18 +367,32 @@ export default function AdminPanel() {
     setNotice(null);
 
     try {
+      const formData = new FormData();
+      formData.append(
+        "company",
+        JSON.stringify({
+          name: companyDraft.name,
+          description: companyDraft.description,
+          category: companyDraft.category,
+        }),
+      );
+      if (companyLogoFile) formData.append("logo", companyLogoFile);
+
       const response = await fetch(
         editingCompany
           ? `/api/admin/companies/${editingCompany}`
           : "/api/admin/companies",
         {
           method: editingCompany ? "PATCH" : "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(companyDraft),
+          body: formData,
         },
       );
       await readResponse(response);
       setCompanyDraft(emptyCompany);
+      setCompanyLogoFile(null);
+      if (companyLogoInputRef.current) {
+        companyLogoInputRef.current.value = "";
+      }
       setEditingCompany(null);
       setNotice(editingCompany ? "Empresa modificada." : "Empresa agregada.");
       await loadData();
@@ -392,6 +415,10 @@ export default function AdminPanel() {
       category: company.category,
       logo: company.logo,
     });
+    setCompanyLogoFile(null);
+    if (companyLogoInputRef.current) {
+      companyLogoInputRef.current.value = "";
+    }
     setError(null);
     setNotice(null);
   }
@@ -409,6 +436,10 @@ export default function AdminPanel() {
       if (editingCompany === company.id) {
         setEditingCompany(null);
         setCompanyDraft(emptyCompany);
+        setCompanyLogoFile(null);
+        if (companyLogoInputRef.current) {
+          companyLogoInputRef.current.value = "";
+        }
       }
       await loadData();
     } catch (deleteError) {
@@ -564,37 +595,40 @@ export default function AdminPanel() {
                     className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-3"
                   />
                 </label>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <label className="block text-sm font-semibold text-slate-700">
-                    Categoría
-                    <input
-                      maxLength={200}
-                      value={companyDraft.category}
-                      onChange={(event) =>
-                        setCompanyDraft({
-                          ...companyDraft,
-                          category: event.target.value,
-                        })
-                      }
-                      className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-3"
-                    />
-                  </label>
-                  <label className="block text-sm font-semibold text-slate-700">
-                    Logo o ícono
-                    <input
-                      maxLength={200}
-                      value={companyDraft.logo}
-                      onChange={(event) =>
-                        setCompanyDraft({
-                          ...companyDraft,
-                          logo: event.target.value,
-                        })
-                      }
-                      placeholder="🏢"
-                      className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-3"
-                    />
-                  </label>
-                </div>
+                <label className="block text-sm font-semibold text-slate-700">
+                  Categoría
+                  <input
+                    maxLength={200}
+                    value={companyDraft.category}
+                    onChange={(event) =>
+                      setCompanyDraft({
+                        ...companyDraft,
+                        category: event.target.value,
+                      })
+                    }
+                    className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-3"
+                  />
+                </label>
+                <label className="block text-sm font-semibold text-slate-700">
+                  Logo de la empresa
+                  <input
+                    ref={companyLogoInputRef}
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    onChange={(event) =>
+                      setCompanyLogoFile(event.target.files?.[0] ?? null)
+                    }
+                    className="mt-2 w-full rounded-xl border border-slate-300 px-3 py-3 file:mr-3 file:rounded-lg file:border-0 file:bg-sky-50 file:px-3 file:py-2 file:font-semibold file:text-sky-800"
+                  />
+                  <span className="mt-1 block text-xs font-normal text-slate-500">
+                    JPG, PNG o WebP; máximo 5 MB.
+                    {companyLogoFile
+                      ? ` Archivo seleccionado: ${companyLogoFile.name}`
+                      : editingCompany && companyDraft.logo
+                        ? " Deja el campo vacío para conservar el logo actual."
+                        : ""}
+                  </span>
+                </label>
                 <div className="flex flex-wrap gap-3">
                   <button
                     disabled={saving}
@@ -612,6 +646,10 @@ export default function AdminPanel() {
                       onClick={() => {
                         setEditingCompany(null);
                         setCompanyDraft(emptyCompany);
+                        setCompanyLogoFile(null);
+                        if (companyLogoInputRef.current) {
+                          companyLogoInputRef.current.value = "";
+                        }
                       }}
                       className="rounded-xl bg-slate-100 px-5 py-3 font-semibold text-slate-700"
                     >
@@ -637,9 +675,11 @@ export default function AdminPanel() {
                     className="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200"
                   >
                     <div className="flex items-center gap-4">
-                      <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-50 text-xl">
-                        {company.logo || "🏢"}
-                      </span>
+                      <CompanyLogo
+                        logo={company.logo}
+                        name={company.name}
+                        className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-sky-50"
+                      />
                       <div>
                         <h3 className="font-bold text-slate-900">
                           {company.name}

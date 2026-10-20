@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import Header from "@/components/Header";
 import InteractiveStandMap from "@/components/InteractiveStandMap";
+import CompanyLogo from "@/components/CompanyLogo";
 
 import {
   getActiveEvent,
@@ -77,9 +78,11 @@ export default async function StandsPage() {
                   className="group rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200 transition hover:-translate-y-1 hover:shadow-md"
                 >
                   <div className="flex items-start justify-between">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-50 text-xl">
-                      {company.logo}
-                    </div>
+                    <CompanyLogo
+                      logo={company.logo}
+                      name={company.name}
+                      className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-sky-50"
+                    />
 
                     <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-500">
                       {stand.number}

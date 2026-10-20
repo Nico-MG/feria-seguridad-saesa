@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import Header from "@/components/Header";
+import CompanyLogo from "@/components/CompanyLogo";
 import ProductCard from "@/components/ProductCard";
 import RegisterVisitButton from "@/components/RegisterVisitButton";
 import StandLocationMap from "@/components/StandLocationMap";
@@ -86,9 +87,11 @@ export default async function StandPage({ params }: StandPageProps) {
                 <p className="mt-2 text-sm text-sky-100">{company.category}</p>
               </div>
 
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white text-3xl">
-                {company.logo}
-              </div>
+              <CompanyLogo
+                logo={company.logo}
+                name={company.name}
+                className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white"
+              />
             </div>
           </div>
 
