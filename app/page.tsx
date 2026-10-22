@@ -6,6 +6,8 @@ import UpcomingEvents from "@/components/UpcomingEvents";
 
 import { getActiveEvent, getTalksFromSupabase } from "@/lib/supabaseData";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const event = await getActiveEvent();
   const talks = event ? await getTalksFromSupabase(event.id) : [];

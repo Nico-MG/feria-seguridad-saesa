@@ -15,6 +15,18 @@ imagen.
 2. Copia `.env.example` a `.env.local` y completa las variables.
 3. Ejecuta `npm run dev` y abre `http://localhost:3000`.
 
+## Datos en producción (Vercel)
+
+Las páginas del inicio y de stands consultan Supabase en cada solicitud para
+reflejar los cambios sin necesitar una nueva compilación. Si los datos aparecen
+en desarrollo, pero no en producción, verifica en las variables del proyecto
+Vercel que `NEXT_PUBLIC_SUPABASE_URL` y
+`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` correspondan al mismo proyecto Supabase
+que usa `.env.local`. Revisa el entorno correcto (Production o Preview) y vuelve
+a desplegar después de cambiar una variable. Una empresa se muestra en stands
+cuando tiene un stand asociado al evento activo; en «Encuentra una empresa» se
+muestran los stands ubicados en el plano.
+
 ## Panel de administración
 
 El panel está en `/admin` y no aparece en la navegación pública. La ruta no es

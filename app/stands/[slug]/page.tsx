@@ -16,6 +16,8 @@ type StandPageProps = {
   }>;
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function StandPage({ params }: StandPageProps) {
   const { slug } = await params;
 

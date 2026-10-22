@@ -11,6 +11,8 @@ import {
   getStandsFromSupabase,
 } from "@/lib/supabaseData";
 
+export const dynamic = "force-dynamic";
+
 export default async function StandsPage() {
   const event = await getActiveEvent();
 

@@ -244,7 +244,10 @@ export default function InteractiveStandMap({ stands, companies }: Props) {
                 <p className="text-sm font-semibold text-slate-700">
                   Stands en el mapa
                 </p>
-                <div className="mt-3 space-y-2">
+                <div
+                  aria-label="Stands ubicados en el mapa"
+                  className="mt-3 max-h-72 space-y-2 overflow-y-auto overscroll-contain pr-1"
+                >
                   {mappedStands.map((stand) => {
                     const company = companies.find(
                       (item) => item.id === stand.companyId,
