@@ -165,7 +165,7 @@ export default function ParticipantForm({
           onChange={(event) =>
             setName(event.target.value)
           }
-          className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none placeholder:text-slate-400 focus:border-sky-400 focus:ring-2 focus:ring-sky-500/30"
+          className="mt-2 w-full rounded-xl border border-slate-300 bg-[#fbfcfa] px-4 py-3 text-slate-900 outline-none placeholder:text-slate-400 focus:border-sky-700 focus:ring-2 focus:ring-sky-700/20"
           placeholder="Juan Pérez"
         />
       </div>

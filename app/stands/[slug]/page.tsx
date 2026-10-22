@@ -25,7 +25,7 @@ export default async function StandPage({ params }: StandPageProps) {
 
   if (!stand) {
     return (
-      <main className="min-h-screen bg-slate-50">
+      <main className="min-h-screen bg-[#f6f7f3]">
         <Header />
 
         <div className="mx-auto max-w-3xl px-5 py-16 text-center">
@@ -48,7 +48,7 @@ export default async function StandPage({ params }: StandPageProps) {
 
   if (!company) {
     return (
-      <main className="min-h-screen bg-slate-50">
+      <main className="min-h-screen bg-[#f6f7f3]">
         <Header />
 
         <div className="mx-auto max-w-3xl px-5 py-16 text-center">
@@ -61,7 +61,7 @@ export default async function StandPage({ params }: StandPageProps) {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50">
+    <main className="min-h-screen bg-[#f6f7f3]">
       <Header />
 
       <div className="mx-auto max-w-4xl px-5 py-8">
@@ -103,7 +103,7 @@ export default async function StandPage({ params }: StandPageProps) {
 
             <Link
               href={`/stands/${stand.slug}/qr`}
-              className="mt-5 inline-flex w-full items-center justify-center rounded-xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+              className="mt-5 inline-flex w-full items-center justify-center rounded-xl bg-sky-800 px-4 py-3 text-sm font-semibold text-white transition hover:bg-sky-900"
             >
               Ver código QR del stand
             </Link>
@@ -152,7 +152,7 @@ export default async function StandPage({ params }: StandPageProps) {
 
         {stand.contestRequired && (
           <section className="mt-8">
-            <div className="rounded-2xl bg-slate-950 p-6 text-white">
+            <div className="rounded-2xl bg-[#12344a] p-6 text-white">
               <p className="text-sm font-semibold text-sky-300">CONCURSO</p>
 
               <h2 className="mt-2 text-xl font-bold">Registra tu visita</h2>

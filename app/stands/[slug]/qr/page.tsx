@@ -24,7 +24,7 @@ export default async function QRPage({ params }: QRPageProps) {
 
   if (!stand) {
     return (
-      <main className="min-h-screen bg-slate-50">
+      <main className="min-h-screen bg-[#f6f7f3]">
         <Header />
 
         <div className="mx-auto max-w-3xl px-5 py-16 text-center">
@@ -47,7 +47,7 @@ export default async function QRPage({ params }: QRPageProps) {
 
   if (!company) {
     return (
-      <main className="min-h-screen bg-slate-50">
+      <main className="min-h-screen bg-[#f6f7f3]">
         <Header />
 
         <div className="mx-auto max-w-3xl px-5 py-16 text-center">
@@ -60,7 +60,7 @@ export default async function QRPage({ params }: QRPageProps) {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50">
+    <main className="min-h-screen bg-[#f6f7f3]">
       <Header />
 
       <div className="mx-auto max-w-3xl px-5 py-8">

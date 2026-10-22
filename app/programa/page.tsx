@@ -83,7 +83,7 @@ export default function ProgramaPage() {
   );
 
   return (
-    <main className="min-h-screen bg-slate-50">
+    <main className="min-h-screen bg-[#f6f7f3]">
       <Header />
 
       <div className="mx-auto max-w-4xl px-5 py-8">

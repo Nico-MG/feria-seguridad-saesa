@@ -18,7 +18,7 @@ export default async function StandsPage() {
 
   if (!event) {
     return (
-      <main className="min-h-screen bg-slate-50">
+      <main className="min-h-screen bg-[#f6f7f3]">
         <Header />
 
         <div className="mx-auto max-w-5xl px-5 py-16 text-center">
@@ -36,7 +36,7 @@ export default async function StandsPage() {
   ]);
 
   return (
-    <main className="min-h-screen bg-slate-50">
+    <main className="min-h-screen bg-[#f6f7f3]">
       <Header />
 
       <div className="mx-auto max-w-7xl px-5 py-8">
@@ -77,7 +77,7 @@ export default async function StandsPage() {
                 <Link
                   key={stand.id}
                   href={`/stands/${stand.slug}`}
-                  className="group rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200 transition hover:-translate-y-1 hover:shadow-md"
+                  className="group rounded-2xl border border-slate-200/80 border-t-2 border-t-sky-700 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
                 >
                   <div className="flex items-start justify-between">
                     <CompanyLogo

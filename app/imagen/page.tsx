@@ -322,7 +322,7 @@ export default function ImageGamePage() {
           </p>
           <Link
             href="/concurso#registro-participante"
-            className="mt-5 inline-flex rounded-xl bg-slate-950 px-5 py-3 font-semibold text-white"
+            className="mt-5 inline-flex rounded-xl bg-sky-800 px-5 py-3 font-semibold text-white transition hover:bg-sky-900"
           >
             Ir a registrarme
           </Link>
@@ -465,7 +465,7 @@ export default function ImageGamePage() {
           <button
             onClick={() => void startOrResumeGame()}
             disabled={starting}
-            className="mt-5 rounded-xl bg-slate-950 px-5 py-3 font-semibold text-white disabled:opacity-50"
+            className="mt-5 rounded-xl bg-sky-800 px-5 py-3 font-semibold text-white transition hover:bg-sky-900 disabled:opacity-50"
           >
             {starting ? "Iniciando..." : "Comenzar juego"}
           </button>

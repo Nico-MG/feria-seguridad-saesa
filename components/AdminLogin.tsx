@@ -81,7 +81,7 @@ export default function AdminLogin({
             required
             value={username}
             onChange={(event) => setUsername(event.target.value)}
-            className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-500/30"
+            className="mt-2 w-full rounded-xl border border-slate-300 bg-[#fbfcfa] px-4 py-3 text-slate-900 outline-none focus:border-sky-700 focus:ring-2 focus:ring-sky-700/20"
           />
         </div>
 
@@ -99,7 +99,7 @@ export default function AdminLogin({
             required
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-500/30"
+            className="mt-2 w-full rounded-xl border border-slate-300 bg-[#fbfcfa] px-4 py-3 text-slate-900 outline-none focus:border-sky-700 focus:ring-2 focus:ring-sky-700/20"
           />
         </div>
 
