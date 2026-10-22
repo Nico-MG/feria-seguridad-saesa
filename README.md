@@ -41,10 +41,12 @@ cookie `HttpOnly` y comprobación de origen.
    enlaces web y redes sociales de empresas, y permite que el registro requiera
    solo un nombre único. Si ya hay participantes con nombres repetidos
    (ignorando mayúsculas y espacios al inicio o al final), resuelve esos
-   duplicados antes de aplicar esa migración. Si ya aplicaste las anteriores,
-   ejecuta las posteriores que aún te falten, incluidas
-   `20261017130000_sync_companies_id_sequence.sql`,
-   `20261017140000_stand_map_areas.sql` y la nueva migración.
+   duplicados antes de aplicar esa migración. La migración
+   `20261022180000_company_linkedin_url.sql` agrega el campo de LinkedIn y
+   reubica allí los enlaces de LinkedIn que estén guardados actualmente como
+   YouTube, conservando los enlaces reales de YouTube. Si ya aplicaste algunas
+   migraciones, ejecuta solo las que falten y en orden; para habilitar LinkedIn,
+   aplica `20261022180000_company_linkedin_url.sql`.
 2. Configura `SUPABASE_SERVICE_ROLE_KEY` en `.env.local` y en las variables
    privadas del entorno de despliegue. No debe tener el prefijo `NEXT_PUBLIC_`
    ni exponerse al navegador.
@@ -53,17 +55,18 @@ cookie `HttpOnly` y comprobación de origen.
 4. Reinicia la aplicación y entra a `/admin`.
 
 El panel permite agregar y modificar empresas con su página web y enlaces
-opcionales a Instagram, Facebook y YouTube, administrar stands y actividades de
-la feria activa, subir logos JPG, PNG o WebP de hasta 5 MB para las empresas y
-configurar varias imágenes para el juego. Los logos se guardan en el bucket
-público de Supabase Storage `feria-game-images`, que debe estar disponible junto
-con el almacenamiento de imágenes del juego. No se puede eliminar una empresa
-mientras tenga stands, actividades o productos asociados. En la pestaña de
-stands, usa «Ubicar en plano» y arrastra sobre el mapa para marcar el área de
-cada stand. La primera mitad de las imágenes se asigna a la mañana y la segunda
-a la tarde; si el total es impar, la mañana recibe una imagen adicional. El
-administrador habilita manualmente una sesión a la vez y debe cerrarla antes de
-abrir la otra. Los intentos ya iniciados pueden terminar después del cierre.
+opcionales a Instagram, Facebook, LinkedIn y YouTube, administrar stands y
+actividades de la feria activa, subir logos JPG, PNG o WebP de hasta 5 MB para
+las empresas y configurar varias imágenes para el juego. Los logos se guardan
+en el bucket público de Supabase Storage `feria-game-images`, que debe estar
+disponible junto con el almacenamiento de imágenes del juego. No se puede
+eliminar una empresa mientras tenga stands, actividades o productos asociados.
+En la pestaña de stands, usa «Ubicar en plano» y arrastra sobre el mapa para
+marcar el área de cada stand. La primera mitad de las imágenes se asigna a la
+mañana y la segunda a la tarde; si el total es impar, la mañana recibe una
+imagen adicional. El administrador habilita manualmente una sesión a la vez y
+debe cerrarla antes de abrir la otra. Los intentos ya iniciados pueden terminar
+después del cierre.
 
 El registro al concurso se inicia escaneando el QR de un stand participante.
 Si la persona aún no está registrada, ingresa un nombre único después del

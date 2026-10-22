@@ -37,7 +37,7 @@ export async function GET(request: Request) {
       supabase
         .from("companies")
         .select(
-          "id, name, description, category, logo, website_url, instagram_url, facebook_url, youtube_url",
+          "id, name, description, category, logo, website_url, instagram_url, facebook_url, linkedin_url, youtube_url",
         )
         .order("name"),
       supabase
@@ -71,6 +71,7 @@ export async function GET(request: Request) {
         websiteUrl: company.website_url ?? "",
         instagramUrl: company.instagram_url ?? "",
         facebookUrl: company.facebook_url ?? "",
+        linkedinUrl: company.linkedin_url ?? "",
         youtubeUrl: company.youtube_url ?? "",
       })),
       stands: (stands ?? []).map((stand) => ({

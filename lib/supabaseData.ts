@@ -71,6 +71,7 @@ export async function getCompaniesFromSupabase(): Promise<Company[]> {
     websiteUrl: company.website_url ?? "",
     instagramUrl: company.instagram_url ?? "",
     facebookUrl: company.facebook_url ?? "",
+    linkedinUrl: company.linkedin_url ?? "",
     youtubeUrl: company.youtube_url ?? "",
   }));
 }
@@ -101,6 +102,7 @@ export async function getCompanyFromSupabase(
     websiteUrl: data.website_url ?? "",
     instagramUrl: data.instagram_url ?? "",
     facebookUrl: data.facebook_url ?? "",
+    linkedinUrl: data.linkedin_url ?? "",
     youtubeUrl: data.youtube_url ?? "",
   };
 }

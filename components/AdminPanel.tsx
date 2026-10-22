@@ -20,6 +20,7 @@ type Company = {
   websiteUrl: string;
   instagramUrl: string;
   facebookUrl: string;
+  linkedinUrl: string;
   youtubeUrl: string;
 };
 
@@ -86,6 +87,7 @@ const emptyCompany: CompanyDraft = {
   websiteUrl: "",
   instagramUrl: "",
   facebookUrl: "",
+  linkedinUrl: "",
   youtubeUrl: "",
 };
 
@@ -385,6 +387,7 @@ export default function AdminPanel() {
           website_url: companyDraft.websiteUrl,
           instagram_url: companyDraft.instagramUrl,
           facebook_url: companyDraft.facebookUrl,
+          linkedin_url: companyDraft.linkedinUrl,
           youtube_url: companyDraft.youtubeUrl,
         }),
       );
@@ -429,6 +432,7 @@ export default function AdminPanel() {
       websiteUrl: company.websiteUrl,
       instagramUrl: company.instagramUrl,
       facebookUrl: company.facebookUrl,
+      linkedinUrl: company.linkedinUrl ?? "",
       youtubeUrl: company.youtubeUrl,
     });
     setCompanyLogoFile(null);
@@ -630,6 +634,7 @@ export default function AdminPanel() {
                     ["websiteUrl", "Página web"],
                     ["instagramUrl", "Instagram"],
                     ["facebookUrl", "Facebook"],
+                    ["linkedinUrl", "LinkedIn"],
                     ["youtubeUrl", "YouTube"],
                   ] as const
                 ).map(([field, label]) => (
@@ -742,6 +747,7 @@ export default function AdminPanel() {
                               ["websiteUrl", "Página web"],
                               ["instagramUrl", "Instagram"],
                               ["facebookUrl", "Facebook"],
+                              ["linkedinUrl", "LinkedIn"],
                               ["youtubeUrl", "YouTube"],
                             ] as const
                           ).map(([field, label]) =>

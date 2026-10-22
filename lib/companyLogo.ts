@@ -14,6 +14,7 @@ export type CompanyInput = {
   website_url: string;
   instagram_url: string;
   facebook_url: string;
+  linkedin_url: string;
   youtube_url: string;
 };
 
@@ -44,6 +45,7 @@ export function parseCompanyInput(value: unknown): CompanyInput | null {
   const websiteUrl = parseOptionalUrl(input.website_url);
   const instagramUrl = parseOptionalUrl(input.instagram_url);
   const facebookUrl = parseOptionalUrl(input.facebook_url);
+  const linkedinUrl = parseOptionalUrl(input.linkedin_url);
   const youtubeUrl = parseOptionalUrl(input.youtube_url);
   if (
     typeof input.name !== "string" ||
@@ -56,6 +58,7 @@ export function parseCompanyInput(value: unknown): CompanyInput | null {
     websiteUrl === null ||
     instagramUrl === null ||
     facebookUrl === null ||
+    linkedinUrl === null ||
     youtubeUrl === null
   ) {
     return null;
@@ -68,6 +71,7 @@ export function parseCompanyInput(value: unknown): CompanyInput | null {
     website_url: websiteUrl,
     instagram_url: instagramUrl,
     facebook_url: facebookUrl,
+    linkedin_url: linkedinUrl,
     youtube_url: youtubeUrl,
   };
 }

@@ -26,6 +26,7 @@ export type Company = {
   websiteUrl?: string | null;
   instagramUrl?: string | null;
   facebookUrl?: string | null;
+  linkedinUrl?: string | null;
   youtubeUrl?: string | null;
 };
 

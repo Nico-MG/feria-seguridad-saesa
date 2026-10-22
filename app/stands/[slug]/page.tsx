@@ -122,6 +122,7 @@ export default async function StandPage({ params }: StandPageProps) {
               ["Página web", company.websiteUrl],
               ["Instagram", company.instagramUrl],
               ["Facebook", company.facebookUrl],
+              ["LinkedIn", company.linkedinUrl],
               ["YouTube", company.youtubeUrl],
             ].map(
               ([label, url]) =>
@@ -140,7 +141,8 @@ export default async function StandPage({ params }: StandPageProps) {
             {!company.websiteUrl &&
               !company.instagramUrl &&
               !company.facebookUrl &&
-              !company.youtubeUrl && (
+            !company.linkedinUrl &&
+            !company.youtubeUrl && (
                 <p className="text-sm text-slate-500">
                   Esta empresa todavía no ha agregado enlaces.
                 </p>
