@@ -86,7 +86,7 @@ export default async function StandsPage() {
                       className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-sky-50"
                     />
 
-                    <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-500">
+                    <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-white">
                       {stand.number}
                     </span>
                   </div>

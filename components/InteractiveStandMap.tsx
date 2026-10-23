@@ -263,7 +263,7 @@ export default function InteractiveStandMap({ stands, companies }: Props) {
                         className="flex w-full items-center gap-3 rounded-lg p-2 text-left hover:bg-slate-50"
                       >
                         <span
-                          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm font-bold text-slate-900 ${
+                          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm font-bold text-black ${
                             visited ? "bg-green-300" : "bg-yellow-300"
                           }`}
                         >
