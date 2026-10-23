@@ -145,7 +145,7 @@ export default function InteractiveStandMap({ stands, companies }: Props) {
                           ? "rgba(34, 197, 94, 0.72)"
                           : "rgba(250, 204, 21, 0.72)"
                       }
-                      stroke={isSelected ? "#075985" : "#ffffff"}
+                      stroke={isSelected ? "#d6a92d" : "#ffffff"}
                       strokeWidth={isSelected ? "0.55" : "0.25"}
                       vectorEffect="non-scaling-stroke"
                     />
@@ -154,7 +154,7 @@ export default function InteractiveStandMap({ stands, companies }: Props) {
                       y={area.y + area.height / 2}
                       textAnchor="middle"
                       dominantBaseline="central"
-                      fill="#0f172a"
+                      fill="#0b0b0b"
                       fontSize="2"
                       fontWeight="700"
                       pointerEvents="none"

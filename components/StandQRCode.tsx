@@ -31,7 +31,7 @@ export default function StandQRCode({ slug }: StandQRCodeProps) {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+      <div className="qr-code-surface rounded-2xl p-4 shadow-sm ring-1 ring-slate-200">
         <QRCodeSVG value={url} size={220} level="H" includeMargin />
       </div>
 

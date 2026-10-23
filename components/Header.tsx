@@ -17,7 +17,7 @@ export default function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="relative z-20 border-b border-slate-200/80 bg-white text-slate-900">
+    <header className="relative z-20 border-b border-slate-200/80 bg-slate-50 text-slate-900">
       <div aria-hidden="true" className="h-1 bg-gradient-to-r from-sky-700 via-sky-500 to-amber-400" />
       <div className="mx-auto max-w-6xl px-5 py-3 sm:py-4">
         <div className="flex items-center justify-between">

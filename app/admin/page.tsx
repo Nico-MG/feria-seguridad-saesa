@@ -21,7 +21,7 @@ export default async function AdminPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#f6f7f3] px-5 py-12">
+    <main className="flex min-h-screen items-center justify-center bg-background px-5 py-12">
       <AdminLogin configured={areAdminCredentialsConfigured()} />
     </main>
   );

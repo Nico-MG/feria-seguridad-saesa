@@ -197,8 +197,8 @@ export default function AdminStandMapEditor({
                 y={area.y}
                 width={area.width}
                 height={area.height}
-                fill="rgba(14, 116, 144, 0.22)"
-                stroke="#0e7490"
+                fill="rgba(214, 169, 45, 0.22)"
+                stroke="#a7801b"
                 strokeWidth="0.35"
                 vectorEffect="non-scaling-stroke"
                 pointerEvents="none"
@@ -211,8 +211,8 @@ export default function AdminStandMapEditor({
               y={displayedArea.y}
               width={displayedArea.width}
               height={displayedArea.height}
-              fill="rgba(245, 158, 11, 0.5)"
-              stroke="#b45309"
+              fill="rgba(214, 169, 45, 0.5)"
+              stroke="#d6a92d"
               strokeWidth="0.5"
               vectorEffect="non-scaling-stroke"
               pointerEvents="none"
@@ -221,8 +221,9 @@ export default function AdminStandMapEditor({
         </svg>
       </div>
       <p className="mt-3 text-xs text-slate-500">
-        Las áreas azules ya están asignadas. La zona amarilla corresponde al
-        stand que estás ubicando; no se guardará hasta que confirmes.
+        Las áreas con relleno tenue ya están asignadas. El relleno dorado más
+        intenso corresponde al stand que estás ubicando; no se guardará hasta
+        que confirmes.
       </p>
     </section>
   );

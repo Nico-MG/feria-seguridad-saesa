@@ -205,7 +205,7 @@ export default function ConcursoPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#f6f7f3]">
+      <main className="min-h-screen bg-background">
         <Header />
 
         <div className="mx-auto max-w-4xl px-5 py-16 text-center">
@@ -217,7 +217,7 @@ export default function ConcursoPage() {
 
   if (error) {
     return (
-      <main className="min-h-screen bg-[#f6f7f3]">
+      <main className="min-h-screen bg-background">
         <Header />
 
         <div className="mx-auto max-w-4xl px-5 py-16">
@@ -379,7 +379,7 @@ export default function ConcursoPage() {
             {/* PROGRESO */}
 
             <section className="mt-8">
-              <div className="rounded-3xl bg-[#12344a] p-6 text-white">
+              <div className="rounded-3xl bg-slate-900 p-6 text-white">
                 <div className="flex items-end justify-between gap-4">
                   <div>
                     <p className="text-sm font-semibold text-sky-300">

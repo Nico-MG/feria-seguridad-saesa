@@ -53,7 +53,7 @@ export default function HomeSchedule({ talks }: HomeScheduleProps) {
         <div>
           <div className="mb-4">
             <p className="text-sm font-semibold text-red-600">AHORA</p>
-            <h2 className="mt-1 text-2xl font-bold text-[#12344a]">
+            <h2 className="mt-1 text-2xl font-bold text-slate-900">
               En vivo
             </h2>
           </div>
@@ -71,7 +71,7 @@ export default function HomeSchedule({ talks }: HomeScheduleProps) {
             <p className="text-sm font-bold uppercase tracking-wider text-sky-700">
               Sigue en el programa
             </p>
-            <h2 className="mt-1 text-2xl font-bold tracking-tight text-[#12344a] sm:text-3xl">
+            <h2 className="mt-1 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
               Próxima actividad
             </h2>
             <p className="mt-2 text-sm text-slate-600">
@@ -89,15 +89,15 @@ export default function HomeSchedule({ talks }: HomeScheduleProps) {
 
         {nextTalk ? (
           <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-[#12344a] text-white shadow-sm">
+            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-900 text-white shadow-sm">
               <div className="h-1.5 bg-amber-400" />
 
               <div className="p-6 sm:p-8">
-                <span className="inline-flex rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-sky-100">
+                <span className="inline-flex rounded-full bg-amber-400 px-3 py-1 text-xs font-bold text-[#0b0b0b]">
                   PRÓXIMO EVENTO
                 </span>
 
-                <p className="mt-6 text-sm font-semibold text-sky-200">
+                <p className="mt-6 text-sm font-semibold text-amber-800">
                   {formatTime(nextTalk.start)} — {formatTime(nextTalk.end)}
                 </p>
 

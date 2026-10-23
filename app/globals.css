@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f6f7f3;
-  --foreground: #142b3b;
+  --background: #0b0b0b;
+  --foreground: #f5f1e6;
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -10,10 +11,68 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-slate-50: #11110f;
+  --color-slate-100: #181816;
+  --color-slate-200: #272722;
+  --color-slate-300: #38382f;
+  --color-slate-400: #515146;
+  --color-slate-500: #6b6b5d;
+  --color-slate-600: #858577;
+  --color-slate-700: #a2a291;
+  --color-slate-800: #c2c1ae;
+  --color-slate-900: #e4e1d4;
+  --color-slate-950: #f5f2e8;
+  --color-sky-50: #211b0b;
+  --color-sky-100: #30250d;
+  --color-sky-200: #4a390d;
+  --color-sky-300: #775b12;
+  --color-sky-400: #a7801b;
+  --color-sky-500: #c69a25;
+  --color-sky-600: #d6a92d;
+  --color-sky-700: #e0b840;
+  --color-sky-800: #ebca68;
+  --color-sky-900: #f2dc9b;
+  --color-sky-950: #fbf0ca;
+  --color-amber-50: #211a08;
+  --color-amber-100: #30240a;
+  --color-amber-200: #4c370a;
+  --color-amber-300: #8a6410;
+  --color-amber-400: #c49319;
+  --color-amber-500: #d8a71e;
+  --color-amber-600: #e5b72e;
+  --color-amber-700: #edc64e;
+  --color-amber-800: #f3d782;
+  --color-amber-900: #f8e8b5;
+  --color-amber-950: #fcf4dc;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+[class~="text-slate-50"] { color: #fff9e8; }
+[class~="text-slate-100"] { color: #f8f3e4; }
+[class~="text-slate-200"] { color: #e9e3d2; }
+[class~="text-slate-300"] { color: #d6cfbc; }
+[class~="text-slate-400"] { color: #b5ad98; }
+[class~="text-slate-500"] { color: #a49c88; }
+[class~="text-slate-600"] { color: #c3bcaa; }
+[class~="text-slate-700"] { color: #ddd6c4; }
+[class~="text-slate-800"] { color: #eee8d8; }
+[class~="text-slate-900"] { color: #f5f1e6; }
+[class~="text-slate-950"] { color: #fffbed; }
+[class~="bg-white"] { background-color: #171715; }
+[class~="bg-white/80"] { background-color: rgb(23 23 21 / 80%); }
+[class~="bg-white/90"] { background-color: rgb(23 23 21 / 90%); }
+[class~="bg-white/10"] { background-color: rgb(255 255 255 / 10%); }
+[class~="bg-slate-700"] { background-color: #292923; }
+[class~="bg-slate-800"] { background-color: #20201d; }
+[class~="bg-slate-900"] { background-color: #111110; }
+[class~="bg-slate-950"] { background-color: #080808; }
+
+.qr-code-surface {
+  background-color: #fff;
+  color: #111;
 }

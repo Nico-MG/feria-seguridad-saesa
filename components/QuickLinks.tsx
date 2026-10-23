@@ -24,7 +24,7 @@ const links = [
 export default function QuickLinks() {
   return (
     <section className="mt-10">
-      <h2 className="mb-4 text-xl font-bold text-[#12344a]">
+      <h2 className="mb-4 text-xl font-bold text-slate-900">
         Explora la feria
       </h2>
 
@@ -39,7 +39,7 @@ export default function QuickLinks() {
               {link.icon}
             </span>
 
-            <p className="mt-3 font-bold text-[#12344a]">
+            <p className="mt-3 font-bold text-slate-900">
               {link.title}
             </p>
 

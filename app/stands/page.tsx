@@ -18,7 +18,7 @@ export default async function StandsPage() {
 
   if (!event) {
     return (
-      <main className="min-h-screen bg-[#f6f7f3]">
+      <main className="min-h-screen bg-background">
         <Header />
 
         <div className="mx-auto max-w-5xl px-5 py-16 text-center">
@@ -36,7 +36,7 @@ export default async function StandsPage() {
   ]);
 
   return (
-    <main className="min-h-screen bg-[#f6f7f3]">
+    <main className="min-h-screen bg-background">
       <Header />
 
       <div className="mx-auto max-w-7xl px-5 py-8">

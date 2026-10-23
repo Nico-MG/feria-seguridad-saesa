@@ -35,7 +35,7 @@ export default function StandLocationMap({ stand }: Props) {
           height={area.height}
           rx="0.7"
           fill="rgba(250, 204, 21, 0.88)"
-          stroke="#92400e"
+          stroke="#d6a92d"
           strokeWidth="0.7"
           vectorEffect="non-scaling-stroke"
         />
@@ -44,7 +44,7 @@ export default function StandLocationMap({ stand }: Props) {
           y={area.y + area.height / 2}
           textAnchor="middle"
           dominantBaseline="central"
-          fill="#422006"
+          fill="#211a08"
           fontSize="2"
           fontWeight="700"
         >

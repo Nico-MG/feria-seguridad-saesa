@@ -53,7 +53,7 @@ export default function Hero({ eventDate }: HeroProps) {
     : null;
 
   return (
-    <section className="relative overflow-hidden border-b border-slate-200/70 bg-[#f1f5f3] text-slate-900">
+    <section className="relative overflow-hidden border-b border-slate-200/70 bg-slate-50 text-slate-900">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-amber-300/20 blur-3xl"
@@ -96,7 +96,7 @@ export default function Hero({ eventDate }: HeroProps) {
             Hotel Sonesta, Osorno, Chile
           </p>
 
-          <h2 className="mt-5 max-w-5xl text-4xl font-extrabold leading-tight tracking-tight text-[#12344a] sm:text-5xl lg:text-6xl">
+          <h2 className="mt-5 max-w-5xl text-4xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
             Cien años de seguridad y{" "}
             <span className="text-sky-700">resiliencia energética</span>
           </h2>
@@ -135,7 +135,7 @@ export default function Hero({ eventDate }: HeroProps) {
             aria-hidden="true"
             className="absolute h-48 w-48 rounded-full border border-amber-500/20"
           />
-          <div className="relative w-full rounded-3xl border border-white/80 bg-white/90 px-6 py-8 shadow-[0_20px_60px_rgba(18,52,74,0.10)] ring-1 ring-slate-200/70">
+          <div className="relative w-full rounded-3xl border border-white/80 bg-white/90 px-6 py-8 shadow-[0_20px_60px_rgba(0,0,0,0.4)] ring-1 ring-slate-200/70">
             <Image
               src="/images/grupo-saesa-logo.svg"
               alt="Grupo SAESA"

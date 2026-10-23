@@ -12,7 +12,7 @@ export default async function HomePage() {
   const talks = event ? await getTalksFromSupabase(event.id) : [];
 
   return (
-    <main className="min-h-screen bg-[#f6f7f3]">
+    <main className="min-h-screen bg-background">
       <Header />
 
       <Hero eventDate={event?.date ?? null} />
