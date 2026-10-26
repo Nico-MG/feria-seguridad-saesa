@@ -1,6 +1,13 @@
 import { supabase } from "@/lib/supabase";
 
-import type { Company, Event, Product, Stand, Talk } from "@/types/event";
+import type {
+  Company,
+  ContestStand,
+  Event,
+  Product,
+  Stand,
+  Talk,
+} from "@/types/event";
 
 function getStandMapArea(stand: {
   map_x?: number | null;
@@ -248,10 +255,12 @@ export async function getActiveEvent(): Promise<Event | null> {
   };
 }
 
-export async function getContestStands(eventId: number): Promise<Stand[]> {
+export async function getContestStands(
+  eventId: number,
+): Promise<ContestStand[]> {
   const { data, error } = await supabase
     .from("stands")
-    .select("*")
+    .select("id, event_id, company_id, number, location, slug, contest_required")
     .eq("event_id", eventId)
     .eq("contest_required", true)
     .order("id");
@@ -260,7 +269,28 @@ export async function getContestStands(eventId: number): Promise<Stand[]> {
     throw new Error(`Error obteniendo stands del concurso: ${error.message}`);
   }
 
-  return (data ?? []).map((stand) => ({
+  const stands = data ?? [];
+  const companyIds = [...new Set(stands.map((stand) => stand.company_id))];
+  const companyNames = new Map<number, string>();
+
+  if (companyIds.length > 0) {
+    const { data: companies, error: companiesError } = await supabase
+      .from("companies")
+      .select("id, name")
+      .in("id", companyIds);
+
+    if (companiesError) {
+      throw new Error(
+        `Error obteniendo nombres de empresas de los stands: ${companiesError.message}`,
+      );
+    }
+
+    for (const company of companies ?? []) {
+      companyNames.set(company.id, company.name);
+    }
+  }
+
+  return stands.map((stand) => ({
     id: stand.id,
     eventId: stand.event_id,
     companyId: stand.company_id,
@@ -268,6 +298,7 @@ export async function getContestStands(eventId: number): Promise<Stand[]> {
     location: stand.location,
     slug: stand.slug,
     contestRequired: stand.contest_required,
+    companyName: companyNames.get(stand.company_id) ?? null,
   }));
 }
 

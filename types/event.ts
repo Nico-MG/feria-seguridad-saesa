@@ -46,6 +46,10 @@ export type Stand = {
   } | null;
 };
 
+export type ContestStand = Stand & {
+  companyName: string | null;
+};
+
 export type Product = {
   id: number;
   companyId: number;

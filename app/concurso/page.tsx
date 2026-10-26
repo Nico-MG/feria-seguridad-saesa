@@ -19,7 +19,7 @@ import { ensureAnonymousSession } from "@/lib/auth";
 
 import { getActiveEvent, getContestStands } from "@/lib/supabaseData";
 
-import type { Event, Stand } from "@/types/event";
+import type { ContestStand, Event } from "@/types/event";
 
 type Participant = {
   id: string;
@@ -39,7 +39,7 @@ const getServerScannedStandSlug = () => null;
 export default function ConcursoPage() {
   const [event, setEvent] = useState<Event | null>(null);
 
-  const [contestStands, setContestStands] = useState<Stand[]>([]);
+  const [contestStands, setContestStands] = useState<ContestStand[]>([]);
 
   const [visitedStandIds, setVisitedStandIds] = useState<number[]>([]);
   const [scanNotice, setScanNotice] = useState<string | null>(null);
@@ -239,7 +239,7 @@ export default function ConcursoPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f6f7f3]">
+    <main className="min-h-screen bg-background">
       <Header />
 
       <div className="mx-auto max-w-4xl px-5 py-8">
@@ -422,7 +422,7 @@ export default function ConcursoPage() {
                 </h2>
               </div>
 
-              <div className="space-y-3">
+              <div className="max-h-96 space-y-3 overflow-y-auto overscroll-contain pr-2">
                 {contestStands.map((stand) => {
                   const visited = visitedStandIds.includes(stand.id);
 
@@ -439,7 +439,7 @@ export default function ConcursoPage() {
                         </p>
 
                         <p className="mt-1 font-bold text-slate-900">
-                          {stand.location}
+                          {stand.companyName ?? "Empresa no asociada"}
                         </p>
                       </div>
 
