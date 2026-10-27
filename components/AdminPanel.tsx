@@ -8,6 +8,8 @@ import {
   useState,
 } from "react";
 import AdminGameEditor from "@/components/AdminGameEditor";
+import AdminInsights from "@/components/AdminInsights";
+import AdminPerformance from "@/components/AdminPerformance";
 import AdminStandMapEditor from "@/components/AdminStandMapEditor";
 import CompanyLogo from "@/components/CompanyLogo";
 
@@ -77,7 +79,13 @@ type TalkDraft = {
 
 type CompanyDraft = Omit<Company, "id">;
 
-type AdminTab = "empresas" | "stands" | "programa" | "juego";
+type AdminTab =
+  | "empresas"
+  | "stands"
+  | "programa"
+  | "juego"
+  | "resultados"
+  | "rendimiento";
 
 const emptyCompany: CompanyDraft = {
   name: "",
@@ -524,6 +532,8 @@ export default function AdminPanel() {
               ["stands", "Stands"],
               ["programa", "Programa"],
               ["juego", "Juego de imágenes"],
+              ["resultados", "Resultados"],
+              ["rendimiento", "Rendimiento"],
             ] as const
           ).map(([tab, label]) => (
             <button
@@ -562,7 +572,11 @@ export default function AdminPanel() {
           </p>
         )}
 
-        {activeTab === "juego" ? (
+        {activeTab === "resultados" ? (
+          <AdminInsights />
+        ) : activeTab === "rendimiento" ? (
+          <AdminPerformance />
+        ) : activeTab === "juego" ? (
           <AdminGameEditor />
         ) : loading ? (
           <div className="rounded-2xl bg-white p-8 text-center text-slate-500">

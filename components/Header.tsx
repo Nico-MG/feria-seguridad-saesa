@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -24,12 +25,21 @@ export default function Header() {
           <Link
             href="/"
             aria-label="SAESA Feria de Seguridad - Ir al inicio"
-            className="group rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-600"
+            className="group flex items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-600 sm:gap-4"
           >
-            <p className="text-xs font-bold tracking-[0.18em] text-sky-700 transition group-hover:text-sky-900">
-              SAESA
-            </p>
-            <h1 className="text-lg font-bold tracking-tight text-slate-900 sm:text-xl">
+            <Image
+              src="/images/logo-saesa-blanco-letra.png"
+              alt="Grupo Saesa"
+              width={515}
+              height={248}
+              priority
+              className="h-9 w-auto shrink-0 transition-opacity group-hover:opacity-80 sm:h-11"
+            />
+            <span
+              aria-hidden="true"
+              className="h-8 w-px shrink-0 bg-amber-400/70 sm:h-10"
+            />
+            <h1 className="text-base font-bold tracking-tight text-slate-900 sm:text-xl">
               Feria de Seguridad
             </h1>
           </Link>

@@ -46,7 +46,9 @@ cookie `HttpOnly` y comprobación de origen.
    reubica allí los enlaces de LinkedIn que estén guardados actualmente como
    YouTube, conservando los enlaces reales de YouTube. Si ya aplicaste algunas
    migraciones, ejecuta solo las que falten y en orden; para habilitar LinkedIn,
-   aplica `20261022180000_company_linkedin_url.sql`.
+   aplica `20261022180000_company_linkedin_url.sql`. Para registrar visitas
+   anónimas y tiempos de carga de páginas, aplica también
+   `20261026154000_page_analytics.sql`.
 2. Configura `SUPABASE_SERVICE_ROLE_KEY` en `.env.local` y en las variables
    privadas del entorno de despliegue. No debe tener el prefijo `NEXT_PUBLIC_`
    ni exponerse al navegador.
@@ -67,6 +69,14 @@ mañana y la segunda a la tarde; si el total es impar, la mañana recibe una
 imagen adicional. El administrador habilita manualmente una sesión a la vez y
 debe cerrarla antes de abrir la otra. Los intentos ya iniciados pueden terminar
 después del cierre.
+
+Las secciones «Resultados» y «Rendimiento» muestran a quienes completaron los
+stands participantes, el ranking del juego, la actividad de la feria y las
+visitas y tiempos de carga observados en la página. La medición usa un
+identificador aleatorio guardado en el navegador; la tabla de métricas no guarda
+nombres, correo, dirección IP ni agente de usuario. Los límites de capacidad y
+usuarios simultáneos del proveedor no se consultan desde la aplicación; deben
+revisarse en los paneles de Vercel y Supabase.
 
 El registro al concurso se inicia escaneando el QR de un stand participante.
 Si la persona aún no está registrada, ingresa un nombre único después del
