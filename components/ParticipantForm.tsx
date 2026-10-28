@@ -87,8 +87,10 @@ export default function ParticipantForm({
     void loadParticipant();
   }, []);
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  const hasContactDetails = Boolean(email.trim() || phone.trim());
+  const consentChanged = contactSharingConsent !== savedContact.consent;
+
+  async function saveParticipant() {
     const trimmedName = name.trim();
     const trimmedEmail = email.trim();
     const trimmedPhone = phone.trim();
@@ -144,6 +146,11 @@ export default function ParticipantForm({
     }
   }
 
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    await saveParticipant();
+  }
+
   if (loading) {
     return (
       <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
@@ -172,11 +179,52 @@ export default function ParticipantForm({
             <div className="mt-4 space-y-1 text-sm text-green-900">
               <p>Correo: {email || "No proporcionado"}</p>
               <p>Teléfono: {phone || "No proporcionado"}</p>
-              <p>
-                Permiso para compartir con empresas:{" "}
-                {contactSharingConsent ? "Autorizado" : "No autorizado"}
-              </p>
             </div>
+
+            <label className="mt-4 flex items-start gap-3 rounded-xl bg-white p-4 text-sm leading-6 text-slate-700 ring-1 ring-green-200">
+              <input
+                type="checkbox"
+                checked={contactSharingConsent}
+                disabled={!hasContactDetails || saving}
+                onChange={(event) =>
+                  setContactSharingConsent(event.target.checked)
+                }
+                className="mt-1 h-4 w-4 shrink-0 accent-sky-700"
+              />
+              <span>
+                Autorizo que se compartan mis datos de contacto con las empresas
+                cuyos stands visite.
+                {!hasContactDetails && (
+                  <span className="mt-1 block text-slate-500">
+                    Agrega un correo o teléfono para activar esta autorización.
+                  </span>
+                )}
+                {hasContactDetails && (
+                  <span className="mt-1 block text-slate-500">
+                    El equipo organizador podrá entregar estos datos a las
+                    empresas que visites. Puedes cambiar tu autorización cuando
+                    quieras.
+                  </span>
+                )}
+              </span>
+            </label>
+
+            {error && (
+              <p role="alert" className="mt-3 text-sm text-red-700">
+                {error}
+              </p>
+            )}
+
+            {consentChanged && hasContactDetails && (
+              <button
+                type="button"
+                disabled={saving}
+                onClick={() => void saveParticipant()}
+                className="mt-3 rounded-lg bg-sky-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-sky-900 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {saving ? "Guardando..." : "Guardar autorización"}
+              </button>
+            )}
 
             <button
               type="button"
@@ -263,7 +311,7 @@ export default function ParticipantForm({
         <input
           type="checkbox"
           checked={contactSharingConsent}
-          disabled={!email.trim() && !phone.trim()}
+          disabled={!hasContactDetails}
           onChange={(event) =>
             setContactSharingConsent(event.target.checked)
           }
@@ -272,9 +320,8 @@ export default function ParticipantForm({
         <span>
           Autorizo que se comparta mi correo y/o teléfono con las empresas cuyos
           stands visite para que puedan contactarme. Es opcional y puedo cambiar
-          mi autorización. Actualmente, estos datos solo se guardan para la
-          administración de la feria; la aplicación todavía no los comparte con
-          las empresas.
+          mi autorización. El equipo organizador podrá entregar estos datos a
+          las empresas que visites.
         </span>
       </label>
 
