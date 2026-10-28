@@ -91,9 +91,13 @@ panel de administración muestra el número de oportunidades de cada participant
 Al registrarse, cada persona puede agregar correo electrónico y teléfono de
 forma opcional. También puede autorizar opcionalmente que esos datos se
 compartan con las empresas cuyos stands visite. La autorización se puede
-actualizar desde su registro. Actualmente la aplicación solo muestra los datos
-de contacto al administrador y no los comparte con las empresas. El panel
-administrativo muestra el contacto y el estado de autorización.
+actualizar desde su registro. En `/admin`, la pestaña «Resultados» permite
+seleccionar una empresa y consultar o descargar un CSV con los contactos que
+dieron permiso y escanearon su QR. Los contactos sin autorización nunca se
+incluyen en esa consulta o descarga. La entrega a cada empresa se realiza
+manualmente por el administrador; no hay cuentas de empresa ni acceso directo
+de empresas a la aplicación. El panel también muestra el contacto y el estado
+de autorización para la administración del concurso.
 
 El plano público muestra las áreas pendientes de visita en amarillo y las
 visitadas en verde para el participante de la sesión actual. La ficha de cada
