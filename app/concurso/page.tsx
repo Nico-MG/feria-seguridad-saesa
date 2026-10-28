@@ -417,6 +417,13 @@ export default function ConcursoPage() {
               </div>
             </section>
 
+            <section className="mt-6">
+              <h2 className="mb-3 text-xl font-bold text-slate-900">
+                Tus datos de contacto
+              </h2>
+              <ParticipantForm onRegistered={loadContest} />
+            </section>
+
             <section className="mt-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
               <p className="text-sm font-semibold text-sky-600">
                 JUEGO DE IMÁGENES
