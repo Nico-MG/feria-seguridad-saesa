@@ -43,6 +43,7 @@ export default function ConcursoPage() {
   const [contestStands, setContestStands] = useState<ContestStand[]>([]);
 
   const [visitedStandIds, setVisitedStandIds] = useState<number[]>([]);
+  const [contestEntryRegistered, setContestEntryRegistered] = useState(false);
   const [scanNotice, setScanNotice] = useState<string | null>(null);
   const [scanError, setScanError] = useState<string | null>(null);
 
@@ -76,6 +77,7 @@ export default function ConcursoPage() {
     if (participantError) throw participantError;
 
     let visitedStandIds: number[] = [];
+    let contestEntryRegistered = false;
     if (participantData) {
       const { data: visits, error: visitsError } = await supabase
         .from("stand_visits")
@@ -84,6 +86,15 @@ export default function ConcursoPage() {
 
       if (visitsError) throw visitsError;
       visitedStandIds = (visits ?? []).map((visit) => visit.stand_id);
+
+      const { data: contestEntry, error: contestEntryError } = await supabase
+        .from("contest_entries")
+        .select("id")
+        .eq("participant_id", session.user.id)
+        .maybeSingle();
+
+      if (contestEntryError) throw contestEntryError;
+      contestEntryRegistered = Boolean(contestEntry);
     }
 
     return {
@@ -91,6 +102,7 @@ export default function ConcursoPage() {
       stands,
       participant: participantData as Participant | null,
       visitedStandIds,
+      contestEntryRegistered,
     };
   }, []);
 
@@ -100,6 +112,7 @@ export default function ConcursoPage() {
       setContestStands(result.stands);
       setParticipant(result.participant);
       setVisitedStandIds(result.visitedStandIds);
+      setContestEntryRegistered(result.contestEntryRegistered);
     },
     [],
   );
@@ -250,12 +263,13 @@ export default function ConcursoPage() {
           <p className="text-sm font-semibold text-sky-600">CONCURSO</p>
 
           <h1 className="mt-1 text-3xl font-bold text-slate-900">
-            Pasaporte de seguridad
+            Concurso de seguridad
           </h1>
 
           <p className="mt-3 leading-7 text-slate-500">
-            Regístrate para participar y luego escanea el código QR de cada
-            stand para registrar tus visitas y completar el pasaporte.
+            Escanea los códigos QR de los stands participantes. No necesitas
+            visitarlos todos: cada stand registrado suma una oportunidad para
+            ganar el sorteo.
           </p>
         </section>
 
@@ -271,7 +285,7 @@ export default function ConcursoPage() {
               <p className="mt-1 text-sm text-slate-500">
                 {scannedStand
                   ? `Escaneaste el QR del stand ${scannedStand.number}. Al completar el registro, guardaremos esta visita.`
-                  : "Puedes registrarte ahora, sin escanear un código QR. Después podrás escanear los códigos de los stands para completar tu pasaporte."}
+                  : "Puedes registrarte ahora y luego escanear los códigos QR de los stands para sumar oportunidades en el sorteo."}
               </p>
             </div>
 
@@ -451,8 +465,10 @@ export default function ConcursoPage() {
 
                 <p className="mt-4 text-sm text-slate-300">
                   {completed
-                    ? "🎉 ¡Completaste todos los stands!"
-                    : `Te faltan ${totalStands - visitedCount} stands.`}
+                    ? "🎉 ¡Registraste todos los stands! Cada uno suma una oportunidad."
+                    : visitedCount > 0
+                      ? "Cada stand registrado suma una oportunidad para el sorteo."
+                      : "Escanea el QR de un stand participante para comenzar."}
                 </p>
               </div>
             </section>
@@ -507,7 +523,10 @@ export default function ConcursoPage() {
             {/* CONCURSO */}
 
             <section className="mt-8">
-              <ContestForm completed={completed} />
+              <ContestForm
+                visitedCount={visitedCount}
+                registered={contestEntryRegistered}
+              />
             </section>
           </>
         )}

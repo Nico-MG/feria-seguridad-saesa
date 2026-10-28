@@ -160,8 +160,8 @@ export default async function StandPage({ params }: StandPageProps) {
               <h2 className="mt-2 text-xl font-bold">Registra tu visita</h2>
 
               <p className="mt-2 text-sm leading-6 text-slate-300">
-                Visita este stand y registra tu participación para completar tu
-                pasaporte de la feria.
+                Escanea el QR de este stand para registrar tu visita. Cada
+                stand registrado suma una oportunidad para el sorteo.
               </p>
 
               <div className="mt-5">

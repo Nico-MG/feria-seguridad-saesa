@@ -74,8 +74,8 @@ export default function ConcursoPage() {
           </h1>
 
           <p className="mt-3 text-slate-500">
-            Visita los stands participantes y completa
-            tu pasaporte para participar.
+            Escanea los códigos QR de los stands participantes. Cada visita
+            registrada suma una oportunidad para el sorteo.
           </p>
         </div>
 
@@ -202,9 +202,7 @@ export default function ConcursoPage() {
             Participar
           </h2>
 
-          <ContestForm
-            completed={completed}
-          />
+          <ContestForm visitedCount={visitedCount} registered={false} />
         </section>
       </div>
     </main>

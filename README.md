@@ -48,7 +48,9 @@ cookie `HttpOnly` y comprobación de origen.
    migraciones, ejecuta solo las que falten y en orden; para habilitar LinkedIn,
    aplica `20261022180000_company_linkedin_url.sql`. Para registrar visitas
    anónimas y tiempos de carga de páginas, aplica también
-   `20261026154000_page_analytics.sql`.
+   `20261026154000_page_analytics.sql`. Para que cada participante pueda
+   consultar su inscripción al sorteo, aplica
+   `20261028150000_contest_entry_read_own.sql`.
 2. Configura `SUPABASE_SERVICE_ROLE_KEY` en `.env.local` y en las variables
    privadas del entorno de despliegue. No debe tener el prefijo `NEXT_PUBLIC_`
    ni exponerse al navegador.
@@ -70,20 +72,21 @@ imagen adicional. El administrador habilita manualmente una sesión a la vez y
 debe cerrarla antes de abrir la otra. Los intentos ya iniciados pueden terminar
 después del cierre.
 
-Las secciones «Resultados» y «Rendimiento» muestran a quienes completaron los
-stands participantes, el ranking del juego, la actividad de la feria y las
-visitas y tiempos de carga observados en la página. La medición usa un
+Las secciones «Resultados» y «Rendimiento» muestran a los participantes del
+sorteo con sus oportunidades (una por cada stand registrado), el ranking del
+juego, la actividad de la feria y las visitas y tiempos de carga observados en
+la página. La medición usa un
 identificador aleatorio guardado en el navegador; la tabla de métricas no guarda
 nombres, correo, dirección IP ni agente de usuario. Los límites de capacidad y
 usuarios simultáneos del proveedor no se consultan desde la aplicación; deben
 revisarse en los paneles de Vercel y Supabase.
 
-El registro al concurso se inicia escaneando el QR de un stand participante.
-Si la persona aún no está registrada, ingresa un nombre único después del
-escaneo y la visita al stand queda guardada. No se solicita correo electrónico
-ni teléfono. Si ya está registrada, el escaneo agrega la visita directamente.
-La página del concurso no ofrece el formulario de registro sin un stand
-asociado al QR.
+Para participar en el sorteo, la persona se registra con un nombre único y
+escanea el QR de al menos un stand participante. No es necesario completar todos
+los stands: cada visita distinta queda guardada y suma una oportunidad para el
+sorteo. Los stands adicionales aumentan las oportunidades automáticamente; el
+panel de administración muestra el número de oportunidades de cada participante.
+No se solicita correo electrónico ni teléfono.
 
 El plano público muestra las áreas pendientes de visita en amarillo y las
 visitadas en verde para el participante de la sesión actual. La ficha de cada

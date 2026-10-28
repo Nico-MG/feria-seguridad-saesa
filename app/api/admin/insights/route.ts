@@ -67,34 +67,48 @@ export async function GET(request: Request) {
       visitedStandsByParticipant.set(visit.participant_id, visitedStands);
     }
 
-    const completedParticipantIds = [...visitedStandsByParticipant.entries()]
-      .filter(([, visitedStands]) => visitedStands.size === standIds.length)
+    const contestEntryParticipantIds = new Set<string>();
+    for (let offset = 0; ; offset += PAGE_SIZE) {
+      const { data, error } = await supabase
+        .from("contest_entries")
+        .select("participant_id")
+        .order("participant_id")
+        .range(offset, offset + PAGE_SIZE - 1);
+
+      if (error) throw error;
+      for (const entry of data ?? []) {
+        contestEntryParticipantIds.add(entry.participant_id);
+      }
+      if ((data ?? []).length < PAGE_SIZE) break;
+    }
+
+    const contestParticipantIds = [...visitedStandsByParticipant.entries()]
+      .filter(([participantId]) =>
+        contestEntryParticipantIds.has(participantId),
+      )
       .map(([participantId]) => participantId);
 
     const { data: participants, error: participantsError } =
-      completedParticipantIds.length > 0
+      contestParticipantIds.length > 0
         ? await supabase
             .from("participants")
             .select("id, name")
-            .in("id", completedParticipantIds)
+            .in("id", contestParticipantIds)
         : { data: [], error: null };
 
     if (participantsError) throw participantsError;
 
-    const completedStands = new Map(
-      (participants ?? []).map((participant) => [
-        participant.id,
-        visitedStandsByParticipant.get(participant.id)?.size ?? 0,
-      ]),
-    );
     const result = (participants ?? [])
       .map((participant) => ({
         id: participant.id,
         name: participant.name,
-        completedStands: completedStands.get(participant.id) ?? 0,
+        opportunities:
+          visitedStandsByParticipant.get(participant.id)?.size ?? 0,
       }))
-      .sort((left, right) =>
-        left.name.localeCompare(right.name, "es", { sensitivity: "base" }),
+      .sort(
+        (left, right) =>
+          right.opportunities - left.opportunities ||
+          left.name.localeCompare(right.name, "es", { sensitivity: "base" }),
       );
 
     return Response.json(

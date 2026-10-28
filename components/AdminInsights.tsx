@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 
-type CompletedParticipant = {
+type ContestParticipant = {
   id: string;
   name: string;
-  completedStands: number;
+  opportunities: number;
 };
 
 type RankingEntry = {
@@ -18,7 +18,7 @@ type RankingEntry = {
 
 type ScanSummary = {
   totalStands: number;
-  participants: CompletedParticipant[];
+  participants: ContestParticipant[];
 };
 
 export default function AdminInsights() {
@@ -39,7 +39,7 @@ export default function AdminInsights() {
             };
             if (!response.ok) {
               throw new Error(
-                result.error ?? "No fue posible cargar los stands completados.",
+                result.error ?? "No fue posible cargar los participantes del sorteo.",
               );
             }
             return result;
@@ -69,7 +69,7 @@ export default function AdminInsights() {
         setScanError(
           scansResult.reason instanceof Error
             ? scansResult.reason.message
-            : "No fue posible cargar los stands completados.",
+            : "No fue posible cargar los participantes del sorteo.",
         );
       }
 
@@ -97,8 +97,11 @@ export default function AdminInsights() {
           <div>
             <p className="text-sm font-semibold text-sky-700">CONCURSO</p>
             <h2 className="mt-1 text-xl font-bold text-slate-900">
-              Stands completados
+              Participantes del sorteo
             </h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Cada stand registrado equivale a una oportunidad
+            </p>
           </div>
           {scans && (
             <p className="text-sm text-slate-600">
@@ -121,7 +124,7 @@ export default function AdminInsights() {
           </p>
         ) : scans.participants.length === 0 ? (
           <p className="mt-5 text-sm text-slate-500">
-            Aún nadie ha escaneado todos los stands participantes.
+            Aún no hay participantes registrados con visitas para el sorteo.
           </p>
         ) : (
           <div className="mt-5 overflow-x-auto">
@@ -132,7 +135,7 @@ export default function AdminInsights() {
                     Participante
                   </th>
                   <th scope="col" className="px-3 py-3 text-right">
-                    Stands
+                    Oportunidades
                   </th>
                 </tr>
               </thead>
@@ -146,7 +149,7 @@ export default function AdminInsights() {
                       {participant.name}
                     </td>
                     <td className="px-3 py-3 text-right text-slate-600">
-                      {participant.completedStands}/{scans.totalStands}
+                      {participant.opportunities}
                     </td>
                   </tr>
                 ))}

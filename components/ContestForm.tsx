@@ -6,17 +6,19 @@ import { supabase } from "@/lib/supabase";
 import { ensureAnonymousSession } from "@/lib/auth";
 
 type ContestFormProps = {
-  completed: boolean;
+  visitedCount: number;
+  registered: boolean;
 };
 
 export default function ContestForm({
-  completed,
+  visitedCount,
+  registered,
 }: ContestFormProps) {
   const [loading, setLoading] =
     useState(false);
 
   const [submitted, setSubmitted] =
-    useState(false);
+    useState(registered);
 
   const [error, setError] =
     useState<string | null>(null);
@@ -81,20 +83,20 @@ export default function ContestForm({
     }
   }
 
-  if (!completed) {
+  if (visitedCount === 0 && !submitted) {
     return (
       <div className="rounded-2xl bg-slate-100 p-6 text-center">
         <div className="text-3xl">
-          🔒
+          📷
         </div>
 
         <h3 className="mt-3 font-bold text-slate-900">
-          Concurso bloqueado
+          Escanea un stand para participar
         </h3>
 
         <p className="mt-2 text-sm text-slate-500">
-          Completa todas las visitas requeridas
-          para habilitar tu participación.
+          No necesitas completar todos los stands. Cada visita registrada
+          suma una oportunidad para el sorteo.
         </p>
       </div>
     );
@@ -112,12 +114,13 @@ export default function ContestForm({
         </h3>
 
         <p className="mt-2 text-sm text-green-700">
-          Tu participación en el concurso fue
-          registrada correctamente.
+          Tu participación está registrada y tienes {visitedCount}{" "}
+          {visitedCount === 1 ? "oportunidad" : "oportunidades"} en el sorteo.
         </p>
 
         <div className="mt-5 rounded-xl bg-white p-4 text-sm text-slate-600">
-          ¡Mucha suerte!
+          Cada nuevo stand que escanees sumará otra oportunidad
+          automáticamente. ¡Mucha suerte!
         </div>
       </div>
     );
@@ -134,12 +137,13 @@ export default function ContestForm({
         </div>
 
         <h3 className="mt-3 text-xl font-bold text-slate-900">
-          ¡Completaste tu pasaporte!
+          ¡Participa en el sorteo!
         </h3>
 
         <p className="mt-2 text-sm text-slate-500">
-          Visitaste todos los stands requeridos.
-          Ya puedes participar en el concurso.
+          Ya registraste {visitedCount}{" "}
+          {visitedCount === 1 ? "stand" : "stands"}. Registra tu participación
+          y cada nuevo stand que escanees aumentará tus oportunidades de ganar.
         </p>
       </div>
 
@@ -156,7 +160,7 @@ export default function ContestForm({
       >
         {loading
           ? "Registrando..."
-          : "🎁 Participar en el concurso"}
+          : "🎁 Participar en el sorteo"}
       </button>
     </form>
   );
