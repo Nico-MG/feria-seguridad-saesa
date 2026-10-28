@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 type ContestParticipant = {
   id: string;
   name: string;
+  email: string | null;
+  phone: string | null;
+  contactSharingConsent: boolean;
   opportunities: number;
 };
 
@@ -128,11 +131,20 @@ export default function AdminInsights() {
           </p>
         ) : (
           <div className="mt-5 overflow-x-auto">
-            <table className="w-full min-w-[320px] text-left text-sm">
+            <table className="w-full min-w-[760px] text-left text-sm">
               <thead>
                 <tr className="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-500">
                   <th scope="col" className="px-3 py-3">
                     Participante
+                  </th>
+                  <th scope="col" className="px-3 py-3">
+                    Correo
+                  </th>
+                  <th scope="col" className="px-3 py-3">
+                    Teléfono
+                  </th>
+                  <th scope="col" className="px-3 py-3">
+                    Permiso de contacto
                   </th>
                   <th scope="col" className="px-3 py-3 text-right">
                     Oportunidades
@@ -147,6 +159,17 @@ export default function AdminInsights() {
                   >
                     <td className="px-3 py-3 font-medium text-slate-900">
                       {participant.name}
+                    </td>
+                    <td className="px-3 py-3 text-slate-600">
+                      {participant.email || "—"}
+                    </td>
+                    <td className="px-3 py-3 text-slate-600">
+                      {participant.phone || "—"}
+                    </td>
+                    <td className="px-3 py-3 text-slate-600">
+                      {participant.contactSharingConsent
+                        ? "Autorizado"
+                        : "No autorizado"}
                     </td>
                     <td className="px-3 py-3 text-right text-slate-600">
                       {participant.opportunities}

@@ -63,6 +63,7 @@ export type Participant = {
   name: string;
   email?: string | null;
   phone?: string | null;
+  contactSharingConsent?: boolean;
   registeredAt: string;
 };
 

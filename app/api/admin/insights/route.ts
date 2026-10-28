@@ -92,7 +92,7 @@ export async function GET(request: Request) {
       contestParticipantIds.length > 0
         ? await supabase
             .from("participants")
-            .select("id, name")
+            .select("id, name, email, phone, contact_sharing_consent")
             .in("id", contestParticipantIds)
         : { data: [], error: null };
 
@@ -102,6 +102,9 @@ export async function GET(request: Request) {
       .map((participant) => ({
         id: participant.id,
         name: participant.name,
+        email: participant.email,
+        phone: participant.phone,
+        contactSharingConsent: participant.contact_sharing_consent,
         opportunities:
           visitedStandsByParticipant.get(participant.id)?.size ?? 0,
       }))
