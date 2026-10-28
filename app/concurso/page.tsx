@@ -12,6 +12,7 @@ import Header from "@/components/Header";
 import ParticipantForm from "@/components/ParticipantForm";
 import ContestForm from "@/components/ContestForm";
 import GameRanking from "@/components/GameRanking";
+import CompanyLogo from "@/components/CompanyLogo";
 import Link from "next/link";
 
 import { supabase } from "@/lib/supabase";
@@ -277,16 +278,39 @@ export default function ConcursoPage() {
             <ParticipantForm onRegistered={loadContest} />
 
             {scannedStand && (
-              <p className="mt-4 text-sm text-slate-600">
-                ¿Quieres conocer la empresa?{" "}
+              <div className="mt-5">
+                <p className="mb-2 text-sm text-slate-600">
+                  ¿Quieres conocer la empresa?
+                </p>
                 <Link
                   href={`/stands/${scannedStand.slug}`}
-                  className="font-semibold text-sky-700 underline"
+                  className="flex items-center gap-4 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200 transition hover:bg-sky-50 hover:ring-sky-300"
                 >
-                  Ver página de{" "}
-                  {scannedStand.companyName ?? `stand ${scannedStand.number}`}
+                  <CompanyLogo
+                    logo={scannedStand.companyLogo ?? ""}
+                    name={
+                      scannedStand.companyName ??
+                      `stand ${scannedStand.number}`
+                    }
+                    className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-slate-50"
+                  />
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-base font-bold text-slate-900">
+                      {scannedStand.companyName ??
+                        `Stand ${scannedStand.number}`}
+                    </span>
+                    <span className="mt-1 block text-sm font-semibold text-sky-700">
+                      Ver página de la empresa
+                    </span>
+                  </span>
+                  <span
+                    aria-hidden="true"
+                    className="text-xl font-semibold text-sky-700"
+                  >
+                    →
+                  </span>
                 </Link>
-              </p>
+              </div>
             )}
 
             {invalidScannedStand && (
@@ -326,9 +350,31 @@ export default function ConcursoPage() {
                 {scannedStand && (
                   <Link
                     href={`/stands/${scannedStand.slug}`}
-                    className="mt-2 inline-block font-semibold text-sky-800 underline underline-offset-2"
+                    className="mt-4 flex items-center gap-4 rounded-2xl bg-white p-4 text-left shadow-sm ring-1 ring-green-200 transition hover:bg-green-50 hover:ring-green-300"
                   >
-                    Ver página de {scannedStand.companyName ?? `stand ${scannedStand.number}`}
+                    <CompanyLogo
+                      logo={scannedStand.companyLogo ?? ""}
+                      name={
+                        scannedStand.companyName ??
+                        `stand ${scannedStand.number}`
+                      }
+                      className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-slate-50"
+                    />
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-base font-bold text-slate-900">
+                        {scannedStand.companyName ??
+                          `Stand ${scannedStand.number}`}
+                      </span>
+                      <span className="mt-1 block text-sm font-semibold text-sky-800">
+                        Ver página de la empresa
+                      </span>
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      className="text-xl font-semibold text-sky-800"
+                    >
+                      →
+                    </span>
                   </Link>
                 )}
               </div>

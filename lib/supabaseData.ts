@@ -271,12 +271,15 @@ export async function getContestStands(
 
   const stands = data ?? [];
   const companyIds = [...new Set(stands.map((stand) => stand.company_id))];
-  const companyNames = new Map<number, string>();
+  const companiesById = new Map<
+    number,
+    { name: string; logo: string | null }
+  >();
 
   if (companyIds.length > 0) {
     const { data: companies, error: companiesError } = await supabase
       .from("companies")
-      .select("id, name")
+      .select("id, name, logo")
       .in("id", companyIds);
 
     if (companiesError) {
@@ -286,20 +289,28 @@ export async function getContestStands(
     }
 
     for (const company of companies ?? []) {
-      companyNames.set(company.id, company.name);
+      companiesById.set(company.id, {
+        name: company.name,
+        logo: company.logo,
+      });
     }
   }
 
-  return stands.map((stand) => ({
-    id: stand.id,
-    eventId: stand.event_id,
-    companyId: stand.company_id,
-    number: stand.number,
-    location: stand.location,
-    slug: stand.slug,
-    contestRequired: stand.contest_required,
-    companyName: companyNames.get(stand.company_id) ?? null,
-  }));
+  return stands.map((stand) => {
+    const company = companiesById.get(stand.company_id);
+
+    return {
+      id: stand.id,
+      eventId: stand.event_id,
+      companyId: stand.company_id,
+      number: stand.number,
+      location: stand.location,
+      slug: stand.slug,
+      contestRequired: stand.contest_required,
+      companyName: company?.name ?? null,
+      companyLogo: company?.logo ?? null,
+    };
+  });
 }
 
 export async function getParticipantVisits(
