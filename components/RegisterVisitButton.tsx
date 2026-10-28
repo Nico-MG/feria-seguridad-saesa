@@ -1,30 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 
 import { supabase } from "@/lib/supabase";
 import { ensureAnonymousSession } from "@/lib/auth";
 
 type RegisterVisitButtonProps = {
   standId: number;
-  standSlug: string;
 };
 
 export default function RegisterVisitButton({
   standId,
-  standSlug,
 }: RegisterVisitButtonProps) {
   const [registered, setRegistered] = useState(false);
-  const [hasParticipant, setHasParticipant] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
-    let active = true;
-
-    async function registerVisit() {
+    async function checkVisit() {
       try {
         const session = await ensureAnonymousSession();
 
@@ -39,11 +32,9 @@ export default function RegisterVisitButton({
         }
 
         if (!participant) {
-          if (active) setHasParticipant(false);
+          setLoading(false);
           return;
         }
-
-        if (active) setHasParticipant(true);
 
         const { data: visit, error: visitError } = await supabase
           .from("stand_visits")
@@ -56,91 +47,38 @@ export default function RegisterVisitButton({
           throw visitError;
         }
 
-        if (!visit) {
-          const { error: insertError } = await supabase
-            .from("stand_visits")
-            .insert({
-              participant_id: session.user.id,
-              stand_id: standId,
-            });
+        setRegistered(!!visit);
+      } catch (error) {
+        console.error(error);
 
-          if (insertError && insertError.code !== "23505") {
-            throw insertError;
-          }
-        }
-
-        if (active) setRegistered(true);
-      } catch (visitError) {
-        console.error(visitError);
-
-        if (active) {
-          setError("No fue posible registrar tu visita.");
-        }
+        setError("No fue posible verificar tu visita.");
       } finally {
-        if (active) setLoading(false);
+        setLoading(false);
       }
     }
 
-    void registerVisit();
-
-    return () => {
-      active = false;
-    };
-  }, [standId, retryCount]);
+    checkVisit();
+  }, [standId]);
 
   if (loading) {
-    return <p className="text-sm text-slate-300">Registrando tu visita...</p>;
+    return <p className="text-sm text-slate-300">Verificando visita...</p>;
   }
 
   if (registered) {
-    return (
-      <div>
-        <p className="font-semibold text-green-300">
-          ✓ Tu visita ya quedó registrada
-        </p>
-        <Link
-          href="/concurso"
-          className="mt-2 inline-block text-sm font-semibold text-sky-300 underline underline-offset-2 hover:text-white"
-        >
-          Revisa tu pasaporte en la sección de concurso
-        </Link>
-      </div>
-    );
+    return <p className="font-semibold text-green-300">✓ Visita registrada</p>;
   }
 
   return (
     <div>
-      {error && (
-        <div>
-          <p role="alert" className="text-sm text-red-300">
-            {error}
-          </p>
-          <button
-            type="button"
-            onClick={() => {
-              setError(null);
-              setLoading(true);
-              setRetryCount((count) => count + 1);
-            }}
-            className="mt-3 text-sm font-semibold text-white underline underline-offset-2"
-          >
-            Reintentar
-          </button>
-        </div>
-      )}
+      <p className="text-sm leading-6 text-slate-300">
+        Escanea el código QR de este stand para registrar tu visita en el
+        concurso.
+      </p>
 
-      {!hasParticipant && !error && (
-        <div>
-          <p className="text-sm leading-6 text-slate-300">
-            Inscríbete en el concurso para registrar tu visita en el pasaporte.
-          </p>
-          <Link
-            href={`/concurso?stand=${encodeURIComponent(standSlug)}#registro-participante`}
-            className="mt-3 inline-block text-sm font-semibold text-sky-300 underline underline-offset-2 hover:text-white"
-          >
-            Inscribirme y registrar la visita
-          </Link>
-        </div>
+      {error && (
+        <p role="alert" className="mt-3 text-center text-sm text-red-300">
+          {error}
+        </p>
       )}
     </div>
   );

@@ -157,17 +157,15 @@ export default async function StandPage({ params }: StandPageProps) {
             <div className="rounded-2xl bg-slate-900 p-6 text-white">
               <p className="text-sm font-semibold text-sky-300">CONCURSO</p>
 
-              <h2 className="mt-2 text-xl font-bold">Visita este stand</h2>
+              <h2 className="mt-2 text-xl font-bold">Registra tu visita</h2>
 
               <p className="mt-2 text-sm leading-6 text-slate-300">
-                Registra tu visita para completar tu pasaporte de la feria.
+                Visita este stand y registra tu participación para completar tu
+                pasaporte de la feria.
               </p>
 
               <div className="mt-5">
-                <RegisterVisitButton
-                  standId={stand.id}
-                  standSlug={stand.slug}
-                />
+                <RegisterVisitButton standId={stand.id} />
               </div>
             </div>
           </section>

@@ -95,8 +95,8 @@ export default async function QRPage({ params }: QRPageProps) {
 
             <p className="mt-2 text-sm leading-6 text-slate-500">
               Imprime este código y colócalo en el stand. Al escanearlo, los
-              asistentes verán la información de la empresa y, si ya están
-              inscritos en el concurso, su visita quedará registrada.
+              asistentes podrán registrarse en el concurso y sumar su visita a
+              este stand.
             </p>
           </div>
 

@@ -276,6 +276,19 @@ export default function ConcursoPage() {
 
             <ParticipantForm onRegistered={loadContest} />
 
+            {scannedStand && (
+              <p className="mt-4 text-sm text-slate-600">
+                ¿Quieres conocer la empresa?{" "}
+                <Link
+                  href={`/stands/${scannedStand.slug}`}
+                  className="font-semibold text-sky-700 underline"
+                >
+                  Ver página de{" "}
+                  {scannedStand.companyName ?? `stand ${scannedStand.number}`}
+                </Link>
+              </p>
+            )}
+
             {invalidScannedStand && (
               <p
                 role="alert"
@@ -305,12 +318,20 @@ export default function ConcursoPage() {
         {participant && (
           <>
             {visibleScanNotice && (
-              <p
+              <div
                 role="status"
                 className="mt-5 rounded-xl bg-green-50 p-4 text-sm font-semibold text-green-800 ring-1 ring-green-200"
               >
-                {visibleScanNotice}
-              </p>
+                <p>{visibleScanNotice}</p>
+                {scannedStand && (
+                  <Link
+                    href={`/stands/${scannedStand.slug}`}
+                    className="mt-2 inline-block font-semibold text-sky-800 underline underline-offset-2"
+                  >
+                    Ver página de {scannedStand.companyName ?? `stand ${scannedStand.number}`}
+                  </Link>
+                )}
+              </div>
             )}
             {scanError && (
               <p

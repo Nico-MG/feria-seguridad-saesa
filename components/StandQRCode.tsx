@@ -18,7 +18,7 @@ export default function StandQRCode({ slug }: StandQRCodeProps) {
     getServerOrigin,
   );
   const url = origin
-    ? `${origin}/stands/${encodeURIComponent(slug)}`
+    ? `${origin}/concurso?stand=${encodeURIComponent(slug)}`
     : "";
 
   if (!url) {
@@ -36,7 +36,7 @@ export default function StandQRCode({ slug }: StandQRCodeProps) {
       </div>
 
       <p className="mt-4 text-center text-xs text-slate-400">
-        Escanea este código para conocer la empresa y registrar tu visita
+        Escanea este código para registrar tu visita en el concurso
       </p>
 
       <p className="mt-2 max-w-xs break-all text-center text-xs text-slate-500">
