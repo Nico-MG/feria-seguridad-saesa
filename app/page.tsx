@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import LiveStreamPromo from "@/components/LiveStreamPromo";
 import QuickLinks from "@/components/QuickLinks";
 import HomeSchedule from "@/components/HomeSchedule";
 
@@ -16,6 +17,7 @@ export default async function HomePage() {
       <Header />
 
       <Hero eventDate={event?.date ?? null} />
+      <LiveStreamPromo />
 
       <div className="mx-auto max-w-5xl px-5 pb-12">
         <HomeSchedule talks={talks} />

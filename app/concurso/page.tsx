@@ -253,61 +253,40 @@ export default function ConcursoPage() {
           </h1>
 
           <p className="mt-3 leading-7 text-slate-500">
-            Escanea el código QR de cada stand participante para registrar tus
-            visitas y completar el pasaporte.
+            Regístrate para participar y luego escanea el código QR de cada
+            stand para registrar tus visitas y completar el pasaporte.
           </p>
         </section>
 
         {/* REGISTRO */}
 
-        {!participant && !scannedStandSlug && (
-          <section className="mt-8 rounded-2xl bg-sky-50 p-6 ring-1 ring-sky-200">
-            <h2 className="text-xl font-bold text-sky-950">
-              Escanea el QR de un stand para participar
-            </h2>
-            <p className="mt-2 text-sm leading-6 text-sky-900">
-              El registro se inicia desde el código QR de un stand participante.
-              Cuando lo escanees, podrás completar tus datos y sumar esa visita
-              a tu pasaporte.
-            </p>
-            <Link
-              href="/stands"
-              className="mt-4 inline-flex font-semibold text-sky-800 underline"
-            >
-              Ver stands participantes
-            </Link>
-          </section>
-        )}
-
-        {!participant && scannedStandSlug && (
+        {!participant && (
           <section id="registro-participante" className="mt-8 scroll-mt-6">
             <div className="mb-4">
               <h2 className="text-xl font-bold text-slate-900">
-                Primero, regístrate
+                Regístrate para participar
               </h2>
 
               <p className="mt-1 text-sm text-slate-500">
                 {scannedStand
                   ? `Escaneaste el QR del stand ${scannedStand.number}. Al completar el registro, guardaremos esta visita.`
-                  : "Estamos verificando el stand asociado al código QR."}
+                  : "Puedes registrarte ahora, sin escanear un código QR. Después podrás escanear los códigos de los stands para completar tu pasaporte."}
               </p>
             </div>
 
-            {scannedStand ? (
-              <ParticipantForm onRegistered={loadContest} />
-            ) : loading ? (
-              <p className="rounded-xl bg-white p-5 text-sm text-slate-500">
-                Verificando el código del stand...
-              </p>
-            ) : invalidScannedStand ? (
+            <ParticipantForm onRegistered={loadContest} />
+
+            {invalidScannedStand && (
               <p
                 role="alert"
-                className="rounded-xl bg-red-50 p-5 text-sm text-red-700"
+                className="mt-4 rounded-xl bg-amber-50 p-5 text-sm text-amber-800 ring-1 ring-amber-200"
               >
-                {scanError ??
-                  "Este código no corresponde a un stand participante del concurso."}
+                No pudimos identificar el stand de ese código QR. Puedes
+                registrarte igualmente y escanear otro código desde un stand
+                participante.
               </p>
-            ) : null}
+            )}
+
             <p className="mt-4 text-sm text-slate-600">
               Después de registrarte, podrás jugar{" "}
               <Link
