@@ -1,9 +1,7 @@
 
-import Link from "next/link";
-
 import Header from "@/components/Header";
 import InteractiveStandMap from "@/components/InteractiveStandMap";
-import CompanyLogo from "@/components/CompanyLogo";
+import StandDirectory from "@/components/StandDirectory";
 
 import {
   getActiveEvent,
@@ -60,53 +58,7 @@ export default async function StandsPage() {
           companies={companies}
         />
 
-        <section>
-          <h2 className="mb-5 text-2xl font-bold text-slate-900">
-            Todas las empresas
-          </h2>
-
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {stands.map((stand) => {
-              const company = companies.find(
-                (item) => item.id === stand.companyId
-              );
-
-              if (!company) return null;
-
-              return (
-                <Link
-                  key={stand.id}
-                  href={`/stands/${stand.slug}`}
-                  className="group rounded-2xl border border-slate-200/80 border-t-2 border-t-sky-700 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-                >
-                  <div className="flex items-start justify-between">
-                    <CompanyLogo
-                      logo={company.logo}
-                      name={company.name}
-                      className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-sky-50"
-                    />
-
-                    <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-white">
-                      {stand.number}
-                    </span>
-                  </div>
-
-                  <h3 className="mt-5 text-xl font-bold text-slate-900 group-hover:text-sky-600">
-                    {company.name}
-                  </h3>
-
-                  <p className="mt-2 text-sm leading-6 text-slate-500">
-                    {company.description}
-                  </p>
-
-                  <p className="mt-5 text-sm font-semibold text-sky-600">
-                    Ver stand →
-                  </p>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
+        <StandDirectory stands={stands} companies={companies} />
       </div>
     </main>
   );
