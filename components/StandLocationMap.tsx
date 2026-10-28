@@ -48,7 +48,7 @@ export default function StandLocationMap({ stand }: Props) {
           fontSize="2"
           fontWeight="700"
         >
-          Stand {stand.number}
+          {stand.number}
         </text>
       </svg>
     </div>

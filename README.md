@@ -92,9 +92,12 @@ stand incluye el plano con su ubicación resaltada.
 El juego de `/imagen` exige que el participante se registre en `/concurso`.
 Cada persona tiene un intento por sesión, con puntaje y cronómetro acumulados
 para todas las imágenes de esa sesión. Cada acierto suma 100 puntos; los
-primeros tres fallos no descuentan y cada fallo adicional resta 10. El ranking
-de `/concurso` es una tabla combinada con la sesión indicada en cada resultado,
-ordenada por puntaje y luego por menor tiempo.
+primeros tres fallos no descuentan y cada fallo adicional resta 10. Se puede
+pasar a la siguiente imagen sin encontrar todos los hallazgos y finalizar desde
+la última; solo suman los hallazgos encontrados. Al cerrar una sesión desde el
+panel, los intentos pendientes también se finalizan y se registra su puntaje
+parcial. El ranking de `/concurso` es una tabla combinada con la sesión indicada
+en cada resultado, ordenada por puntaje y luego por menor tiempo.
 
 ## Comandos
 

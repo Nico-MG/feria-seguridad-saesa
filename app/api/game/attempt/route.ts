@@ -67,6 +67,42 @@ function publicImage(
     : publicData;
 }
 
+async function getFinishedAttemptResponse(
+  supabase: ReturnType<typeof getAdminSupabase>,
+  attemptId: string,
+  participantId: string,
+) {
+  const { data: attempt, error } = await supabase
+    .from("game_attempts")
+    .select(
+      "images, current_image_index, total_found, mistakes, score, elapsed_ms, finished_at",
+    )
+    .eq("id", attemptId)
+    .eq("participant_id", participantId)
+    .maybeSingle();
+
+  if (error) throw error;
+  if (!attempt?.finished_at) return null;
+
+  const images = attempt.images as SnapshotImage[];
+  if (!Array.isArray(images)) {
+    throw new Error("El resultado guardado tiene imágenes inválidas.");
+  }
+
+  return Response.json({
+    status: "completed",
+    already_finished: true,
+    image_index: attempt.current_image_index,
+    image_count: images.length,
+    found_count: attempt.total_found,
+    total: images.reduce((sum, image) => sum + image.findings.length, 0),
+    mistakes: attempt.mistakes,
+    score: attempt.score,
+    elapsed_ms: attempt.elapsed_ms,
+    images: images.map((image) => publicImage(supabase, image, true)),
+  });
+}
+
 export async function POST(request: Request) {
   if (!sameOrigin(request)) {
     return Response.json(
@@ -275,10 +311,80 @@ export async function POST(request: Request) {
       });
     }
 
-    if (input.action === "click") {
+    if (
+      input.action === "click" ||
+      input.action === "advance" ||
+      input.action === "finish"
+    ) {
       if (
         typeof input.attemptId !== "string" ||
-        !/^[0-9a-f-]{36}$/i.test(input.attemptId) ||
+        !/^[0-9a-f-]{36}$/i.test(input.attemptId)
+      ) {
+        return Response.json(
+          { error: "El intento no es válido." },
+          { status: 400 },
+        );
+      }
+
+      if (input.action !== "click") {
+        const { data, error } = await supabase.rpc("advance_game_image", {
+          p_attempt_id: input.attemptId,
+          p_participant_id: participantId,
+          p_finish: input.action === "finish",
+        });
+        if (error) throw error;
+        if (!data || typeof data !== "object" || Array.isArray(data)) {
+          throw new Error("Supabase devolvió un resultado inválido.");
+        }
+
+        const result = data as Record<string, unknown>;
+        if (result.status === "not_found") {
+          return Response.json(
+            { error: "No se encontró tu intento." },
+            { status: 404 },
+          );
+        }
+        if (result.status === "already_finished") {
+          const finishedResponse = await getFinishedAttemptResponse(
+            supabase,
+            input.attemptId,
+            participantId,
+          );
+          return (
+            finishedResponse ??
+            Response.json(
+              { error: "Este intento ya fue completado." },
+              { status: 409 },
+            )
+          );
+        }
+        if (result.status === "not_last_image") {
+          return Response.json(
+            { error: "Solo puedes finalizar el juego desde la última imagen." },
+            { status: 409 },
+          );
+        }
+        if (result.status === "last_image") {
+          return Response.json(
+            { error: "Esta es la última imagen; finaliza el juego." },
+            { status: 409 },
+          );
+        }
+        if (result.image_changed && typeof result.image_path === "string") {
+          result.image = supabase.storage
+            .from(STORAGE_BUCKET)
+            .getPublicUrl(result.image_path).data.publicUrl;
+        }
+        if (result.status === "completed" && Array.isArray(result.images)) {
+          result.images = (result.images as SnapshotImage[]).map((image) =>
+            publicImage(supabase, image, true),
+          );
+        }
+
+        return Response.json(result);
+      }
+
+      if (
         typeof input.x !== "number" ||
         !Number.isFinite(input.x) ||
         input.x < 0 ||
@@ -313,9 +419,17 @@ export async function POST(request: Request) {
         );
       }
       if (result.status === "already_finished") {
-        return Response.json(
-          { error: "Este intento ya fue completado." },
-          { status: 409 },
+        const finishedResponse = await getFinishedAttemptResponse(
+          supabase,
+          input.attemptId,
+          participantId,
+        );
+        return (
+          finishedResponse ??
+          Response.json(
+            { error: "Este intento ya fue completado." },
+            { status: 409 },
+          )
         );
       }
 

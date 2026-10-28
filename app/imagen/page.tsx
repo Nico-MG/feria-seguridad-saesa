@@ -57,6 +57,24 @@ type StartResponse = {
   resumed?: boolean;
 };
 
+type AttemptActionResponse = {
+  status: "playing" | "completed";
+  already_finished?: boolean;
+  hit?: boolean;
+  image_changed?: boolean;
+  image_index: number;
+  image_count: number;
+  image?: string;
+  image_width?: number;
+  image_height?: number;
+  found_count: number;
+  total: number;
+  mistakes: number;
+  score?: number;
+  elapsed_ms?: number;
+  images?: GameImage[];
+};
+
 async function readJson<T>(response: Response): Promise<T> {
   const body = (await response.json()) as T & { error?: string };
   if (!response.ok) {
@@ -176,7 +194,7 @@ export default function ImageGamePage() {
       setMessage(
         result.resumed
           ? "Retomaste tu intento. El cronómetro siguió corriendo."
-          : "Encuentra todos los hallazgos de la sesión.",
+          : "Encuentra los hallazgos o avanza a la siguiente imagen cuando quieras.",
       );
     } catch (startError) {
       setError(
@@ -186,6 +204,74 @@ export default function ImageGamePage() {
       );
     } finally {
       setStarting(false);
+    }
+  }
+
+  async function advanceImage(finish: boolean) {
+    if (!attemptId || sendingClick || finalResult) return;
+
+    setSendingClick(true);
+    setError(null);
+
+    try {
+      const authSession = await ensureAnonymousSession();
+      const response = await fetch("/api/game/attempt", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authSession.access_token}`,
+        },
+        body: JSON.stringify({
+          action: finish ? "finish" : "advance",
+          attemptId,
+        }),
+      });
+      const result = await readJson<AttemptActionResponse>(response);
+
+      setFoundCount(result.found_count);
+      setTotalFindings(result.total);
+      setMistakes(result.mistakes);
+      setImageIndex(result.image_index);
+      setImageCount(result.image_count);
+
+      if (result.status === "completed") {
+        setFinalResult({
+          images: result.images ?? [],
+          score: result.score ?? 0,
+          elapsed_ms: result.elapsed_ms ?? 0,
+          mistakes: result.mistakes,
+          found_count: result.found_count,
+          total: result.total,
+        });
+        setAttemptId(null);
+        setMessage(
+          result.already_finished
+            ? "Tu intento ya había finalizado y el resultado quedó registrado."
+            : "Finalizaste el juego. Tu resultado quedó registrado.",
+        );
+        return;
+      }
+
+      if (result.image_changed && result.image) {
+        setCurrentImage({
+          id: `image-${result.image_index}`,
+          image: result.image,
+          imageWidth: result.image_width ?? 1,
+          imageHeight: result.image_height ?? 1,
+        });
+        setMarks([]);
+        setMessage(
+          `Pasaste a la imagen ${result.image_index + 1}. Puedes avanzar sin encontrar todos los hallazgos.`,
+        );
+      }
+    } catch (actionError) {
+      setError(
+        actionError instanceof Error
+          ? actionError.message
+          : "No fue posible avanzar en el juego.",
+      );
+    } finally {
+      setSendingClick(false);
     }
   }
 
@@ -209,30 +295,14 @@ export default function ImageGamePage() {
         body: JSON.stringify({ action: "click", attemptId, x, y }),
       });
 
-      type ClickResponse = {
-        status: "playing" | "completed";
-        hit: boolean;
-        image_changed?: boolean;
-        image_index: number;
-        image_count: number;
-        image?: string;
-        image_width?: number;
-        image_height?: number;
-        found_count: number;
-        total: number;
-        mistakes: number;
-        score?: number;
-        elapsed_ms?: number;
-        images?: GameImage[];
-      };
-      const result = await readJson<ClickResponse>(response);
+      const result = await readJson<AttemptActionResponse>(response);
 
       setFoundCount(result.found_count);
       setTotalFindings(result.total);
       setMistakes(result.mistakes);
       setImageIndex(result.image_index);
       setImageCount(result.image_count);
-      if (result.image_changed && result.image) {
+      if (result.status !== "completed" && result.image_changed && result.image) {
         setCurrentImage({
           id: `image-${result.image_index}`,
           image: result.image,
@@ -240,7 +310,7 @@ export default function ImageGamePage() {
           imageHeight: result.image_height ?? 1,
         });
         setMarks([]);
-      } else {
+      } else if (result.status !== "completed") {
         setMarks((previous) => [
           ...previous,
           { x, y, result: result.hit ? "correct" : "wrong" },
@@ -257,7 +327,11 @@ export default function ImageGamePage() {
           total: result.total,
         });
         setAttemptId(null);
-        setMessage("¡Completaste todas las imágenes de la sesión!");
+        setMessage(
+          result.already_finished
+            ? "Tu intento ya había finalizado y el resultado quedó registrado."
+            : "¡Completaste todas las imágenes de la sesión!",
+        );
       } else if (result.image_changed) {
         setMessage(
           `¡Imagen ${result.image_index + 1} completada! Continúa con la siguiente.`,
@@ -295,8 +369,8 @@ export default function ImageGamePage() {
         </p>
         <h1 className="mt-2 text-3xl font-bold">Detectives de seguridad</h1>
         <p className="mt-2 text-gray-600">
-          Encuentra todos los riesgos ocultos y consigue el mayor puntaje en el
-          menor tiempo.
+          Encuentra los riesgos ocultos y consigue el mayor puntaje en el menor
+          tiempo. Puedes avanzar sin encontrar todos los hallazgos.
         </p>
       </header>
 
@@ -355,7 +429,8 @@ export default function ImageGamePage() {
             <>
               <p className="text-gray-600">
                 Imagen {imageIndex + 1} de {imageCount}. Haz clic sobre los
-                riesgos; el tiempo corre para toda la sesión.
+                riesgos o pasa a la siguiente imagen; el tiempo corre para toda
+                la sesión.
               </p>
               <div
                 onClick={(event) => void selectSpot(event)}
@@ -385,6 +460,22 @@ export default function ImageGamePage() {
                   />
                 ))}
               </div>
+              <button
+                onClick={() =>
+                  void advanceImage(imageIndex === imageCount - 1)
+                }
+                disabled={sendingClick}
+                className="rounded-xl bg-sky-800 px-5 py-3 font-semibold text-white transition hover:bg-sky-900 disabled:cursor-wait disabled:opacity-50"
+              >
+                {sendingClick
+                  ? "Procesando..."
+                  : imageIndex === imageCount - 1
+                    ? "Finalizar juego"
+                    : "Siguiente imagen"}
+              </button>
+              <p className="text-sm text-slate-500">
+                Los hallazgos que no encuentres no sumarán puntos.
+              </p>
             </>
           )}
 
@@ -392,7 +483,7 @@ export default function ImageGamePage() {
             aria-live="polite"
             className="rounded-lg bg-blue-50 p-4 text-blue-900"
           >
-            {sendingClick ? "Revisando..." : message}
+            {sendingClick ? "Procesando..." : message}
           </p>
 
           {error && (
@@ -427,7 +518,11 @@ export default function ImageGamePage() {
                       <div
                         key={finding.id}
                         title={finding.title}
-                        className="pointer-events-none absolute flex aspect-square items-center justify-center rounded-full border-2 border-green-500 bg-green-500/25"
+                        className={`pointer-events-none absolute flex aspect-square items-center justify-center rounded-full border-2 ${
+                          image.foundIds?.includes(finding.id)
+                            ? "border-green-500 bg-green-500/25"
+                            : "border-slate-400 bg-slate-500/25"
+                        }`}
                         style={{
                           left: `${finding.x * 100}%`,
                           top: `${finding.y * 100}%`,
@@ -435,7 +530,7 @@ export default function ImageGamePage() {
                           transform: "translate(-50%, -50%)",
                         }}
                       >
-                        <span className="rounded-full bg-green-700 px-2 py-1 text-xs font-bold text-white">
+                        <span className="rounded-full bg-slate-800 px-2 py-1 text-xs font-bold text-white">
                           {findingIndex + 1}
                         </span>
                       </div>
@@ -444,8 +539,8 @@ export default function ImageGamePage() {
                 </div>
               ))}
               <p className="text-sm text-slate-500">
-                Tu resultado quedó registrado. En esta sesión solo se permite un
-                intento.
+                Tu resultado quedó registrado. Los hallazgos sin encontrar no
+                suman puntos y solo se permite un intento por sesión.
               </p>
             </section>
           )}

@@ -485,6 +485,15 @@ export async function PATCH(request: Request) {
     }
 
     const session = body.session;
+    if (session === null) {
+      const { error } = await supabase.rpc("close_game_session", {
+        p_event_id: event.id,
+      });
+      if (error) throw error;
+
+      return Response.json({ activeSession: null });
+    }
+
     if (session) {
       const { data: settings, error: settingsError } = await supabase
         .from("game_settings")

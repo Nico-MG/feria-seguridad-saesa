@@ -316,7 +316,7 @@ export default function AdminGameEditor() {
       setNotice(
         session
           ? `Sesión de ${sessionLabel[session].toLowerCase()} habilitada para nuevos intentos.`
-          : "El juego quedó cerrado para nuevos intentos.",
+          : "El juego quedó cerrado y se finalizaron los intentos pendientes.",
       );
     } catch (sessionError) {
       setError(
@@ -394,8 +394,8 @@ export default function AdminGameEditor() {
           </strong>
         </p>
         <p className="mt-1 text-sm text-slate-300">
-          Solo se puede habilitar una sesión a la vez. Al cerrar, no se aceptan
-          nuevos intentos; los ya iniciados pueden terminar.
+          Solo se puede habilitar una sesión a la vez. Al cerrar, se finalizan
+          los intentos pendientes y se registra su puntaje parcial.
         </p>
         <div className="mt-4 flex flex-wrap gap-3">
           <button
