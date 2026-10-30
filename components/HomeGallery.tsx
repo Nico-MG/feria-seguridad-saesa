@@ -10,8 +10,23 @@ type GalleryPhoto = {
 
 export default function HomeGallery() {
   const [photos, setPhotos] = useState<GalleryPhoto[]>([]);
+  const [selectedPaths, setSelectedPaths] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  function downloadSelectedPhotos() {
+    photos
+      .filter((photo) => selectedPaths.includes(photo.path))
+      .forEach((photo) => {
+        const link = document.createElement("a");
+        link.href = `/api/gallery/download?path=${encodeURIComponent(photo.path)}`;
+        link.download = "";
+        link.click();
+      });
+  }
+
+  const allSelected =
+    photos.length > 0 && selectedPaths.length === photos.length;
 
   useEffect(() => {
     let active = true;
@@ -72,23 +87,74 @@ export default function HomeGallery() {
           Próximamente compartiremos fotografías de la feria.
         </p>
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {photos.map((photo) => (
-            <figure
-              key={photo.path}
-              className="group overflow-hidden rounded-2xl bg-slate-100 shadow-sm ring-1 ring-slate-200"
-            >
-              {/* Storage images use a runtime-configured host, so render them without Next's remote image loader. */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={photo.url}
-                alt="Fotografía de la Feria de Seguridad SAESA"
-                loading="lazy"
-                className="aspect-[4/3] w-full object-cover transition duration-300 group-hover:scale-[1.03]"
+        <>
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+            <label className="flex cursor-pointer items-center gap-2 text-sm font-semibold text-slate-700">
+              <input
+                type="checkbox"
+                checked={allSelected}
+                onChange={() =>
+                  setSelectedPaths(
+                    allSelected ? [] : photos.map((photo) => photo.path),
+                  )
+                }
+                className="h-4 w-4 rounded border-slate-300 text-sky-700"
               />
-            </figure>
-          ))}
-        </div>
+              Seleccionar todas
+            </label>
+            <button
+              type="button"
+              disabled={selectedPaths.length === 0}
+              onClick={downloadSelectedPhotos}
+              className="rounded-xl bg-sky-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-sky-800 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Descargar seleccionadas ({selectedPaths.length})
+            </button>
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {photos.map((photo) => (
+              <figure
+                key={photo.path}
+                className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200"
+              >
+                <label className="relative block cursor-pointer overflow-hidden bg-slate-100">
+                  {/* Storage images use a runtime-configured host, so render them without Next's remote image loader. */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={photo.url}
+                    alt="Fotografía de la Feria de Seguridad SAESA"
+                    loading="lazy"
+                    className="aspect-[4/3] w-full object-cover transition duration-300 hover:scale-[1.03]"
+                  />
+                  <span className="absolute left-3 top-3 rounded-md bg-white/95 p-1.5 shadow">
+                    <input
+                      type="checkbox"
+                      checked={selectedPaths.includes(photo.path)}
+                      onChange={() =>
+                        setSelectedPaths((current) =>
+                          current.includes(photo.path)
+                            ? current.filter((path) => path !== photo.path)
+                            : [...current, photo.path],
+                        )
+                      }
+                      aria-label="Seleccionar foto para descargar"
+                      className="h-4 w-4 rounded border-slate-300 text-sky-700"
+                    />
+                  </span>
+                </label>
+                <figcaption className="p-3">
+                  <a
+                    href={`/api/gallery/download?path=${encodeURIComponent(photo.path)}`}
+                    download
+                    className="inline-flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-sky-50 hover:text-sky-800"
+                  >
+                    Descargar foto
+                  </a>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </>
       )}
     </section>
   );
