@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 import AdminGameEditor from "@/components/AdminGameEditor";
+import AdminGalleryManager from "@/components/AdminGalleryManager";
 import AdminInsights from "@/components/AdminInsights";
 import AdminPerformance from "@/components/AdminPerformance";
 import AdminStandMapEditor from "@/components/AdminStandMapEditor";
@@ -84,6 +85,7 @@ type AdminTab =
   | "stands"
   | "programa"
   | "juego"
+  | "galeria"
   | "resultados"
   | "rendimiento";
 
@@ -532,6 +534,7 @@ export default function AdminPanel() {
               ["stands", "Stands"],
               ["programa", "Programa"],
               ["juego", "Juego de imágenes"],
+              ["galeria", "Galería"],
               ["resultados", "Resultados"],
               ["rendimiento", "Rendimiento"],
             ] as const
@@ -578,6 +581,8 @@ export default function AdminPanel() {
           <AdminPerformance />
         ) : activeTab === "juego" ? (
           <AdminGameEditor />
+        ) : activeTab === "galeria" ? (
+          <AdminGalleryManager />
         ) : loading ? (
           <div className="rounded-2xl bg-white p-8 text-center text-slate-500">
             Cargando datos de la feria...

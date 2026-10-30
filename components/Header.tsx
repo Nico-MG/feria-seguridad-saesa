@@ -11,6 +11,7 @@ const menuLinks = [
   { label: "Programa", href: "/programa" },
   { label: "Stands", href: "/stands" },
   { label: "Concurso", href: "/concurso" },
+  { label: "Galería", href: "/#galeria" },
 ];
 
 export default function Header() {
@@ -47,7 +48,7 @@ export default function Header() {
           <nav aria-label="Navegación principal" className="hidden items-center gap-1 md:flex">
             {menuLinks.map((link) => {
               const active =
-                link.href === "/"
+                link.href === "/" || link.href === "/#galeria"
                   ? pathname === "/"
                   : pathname.startsWith(link.href);
 
@@ -87,7 +88,7 @@ export default function Header() {
             <div className="mx-auto flex max-w-6xl flex-col">
               {menuLinks.map((link) => {
                 const active =
-                  link.href === "/"
+                  link.href === "/" || link.href === "/#galeria"
                     ? pathname === "/"
                     : pathname.startsWith(link.href);
 
